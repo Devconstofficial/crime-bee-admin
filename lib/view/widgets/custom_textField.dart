@@ -85,7 +85,12 @@ class _MyCustomTextFieldState extends State<MyCustomTextField> {
         hintStyle: AppStyles.workSansTextStyle().copyWith(color: widget.textColor,fontSize: 12),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: widget.focusBorderColor ?? kBackGroundColor,
+            color: widget.focusBorderColor ?? kSecondaryColor,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: widget.borderColor ?? kBackGroundColor,
           ),
         ),
       ),

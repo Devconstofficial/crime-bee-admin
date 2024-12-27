@@ -1,7 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../utils/app_colors.dart';
+import '../../../../utils/app_images.dart';
+import '../../../models/comment_model.dart';
 
 
 class CommentController extends GetxController {
@@ -11,23 +14,98 @@ class CommentController extends GetxController {
   TextEditingController joinedController = TextEditingController(text: '10/05/2024');
   TextEditingController contributionsController = TextEditingController(text: '34 posts, 56 comments');
   TextEditingController flaggedCommentController = TextEditingController(text: '2');
-  final List<Map<String, dynamic>> allUsers = [
-    {"User": "00001", "Comment": "Christine Brooks", "PostId": '00001', "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"User": "00002", "Comment": "Rosie Pearson", "PostId": '00002', "Date & Time": "Dec 6, 2024, 10:45 AM",},
-    {"User": "00003", "Comment": "Darrell Caldwell", "PostId": '00003', "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"User": "00004", "Comment": "Gilbert Johnston", "PostId": '00004', "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"User": "00005", "Comment": "Alan Cain", "PostId": "00005", "Date & Time": "Dec 6, 2024, 10:45 AM",},
-    {"User": "00006", "Comment": "Alfred Murray", "PostId": "00006", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"User": "00007", "Comment": "Bryan Ross", "PostId": "00007", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"User": "00008", "Comment": "Jessica Cook", "PostId": "00008", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"User": "00009", "Comment": "Linda Diaz", "PostId": "00009", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"User": "00010", "Comment": "Matthew Fisher", "PostId": "000010", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"User": "00011", "Comment": "Theresa Phillips", "PostId": "000011", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"User": "00012", "Comment": "Charles Moore", "PostId": "000012", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"User": "00013", "Comment": "Jennifer White", "PostId": "000013", "Date & Time": "Dec 6, 2024, 10:45 AM"},
+  RxList notifications = [].obs;
+  RxList activities = [].obs;
+  var selectedFilters = <String>{}.obs;
+  var isNotificationVisible = false.obs;
+  late GoogleMapController mapController;
+
+  var comments = <CommentModel>[].obs;
+
+  List<Map<String, dynamic>> demoCommentsJson = [
+    {
+      "username": "John Doe",
+      "content": "This is a demo comment!",
+      "likes": 10,
+      "isLiked": false,
+      "image": kUserLogo,
+    },
+    {
+      "username": "Jane Smith",
+      "content": "I totally agree with this.",
+      "likes": 25,
+      "isLiked": true,
+      "image": kUserLogo,
+    },
+    {
+      "username": "Alex Johnson",
+      "content": "I totally agree with this.",
+      "likes": 15,
+      "isLiked": false,
+      "image": kUserLogo,
+    },
   ];
 
-  final int itemsPerPage = 7;
+  void loadDemoComments() {
+    comments.addAll(
+      demoCommentsJson.map((json) => CommentModel.fromJson(json)).toList(),
+    );
+  }
+
+  void toggleFilter(String filter) {
+    if (selectedFilters.contains(filter)) {
+      selectedFilters.remove(filter);
+    } else {
+      selectedFilters.add(filter);
+    }
+  }
+
+  void onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  void toggleNotificationVisibility() {
+    isNotificationVisible.value = !isNotificationVisible.value;
+  }
+
+  void fetchNotifications() {
+    notifications.addAll([
+      {'title': 'New Host registered', 'time': '59 minutes ago', "backColor" : kPrimaryColor,},
+      {'title': 'New Crime Reported', 'time': '1 hour ago',"backColor" : kOrangeColor,},
+      {'title': 'Crime Resolved', 'time': '2 hours ago',"backColor" : kLightBlue,},
+      {'title': 'Update on your case', 'time': '3 hours ago',"backColor" : kGrey,},
+    ]);
+  }
+
+  void fetchActivities() {
+    activities.addAll([
+      {'title': 'Ahmad just cancelled his...', 'time': 'Just now',"backColor" : kPrimaryColor,},
+      {'title': 'John updated the crime report...', 'time': '5 minutes ago',"backColor" : kOrangeColor,},
+      {'title': 'Jane resolved a case', 'time': '10 minutes ago',"backColor" : kLightBlue,},
+      {'title': 'System generated report', 'time': '1 hour ago',"backColor" : kGrey,},
+    ]);
+  }
+
+  @override
+  onInit(){
+    super.onInit();
+    fetchNotifications();
+    fetchActivities();
+    loadDemoComments();
+  }
+
+  final List<Map<String, dynamic>> allUsers = [
+    {"User": "JohnD", "Comment": "Suspicious activity near...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM"},
+    {"User": "JaneSmith", "Comment": "This is untrue; please clarify...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
+    {"User": "JohnD", "Comment": "Suspicious activity near...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
+    {"User": "JaneSmith", "Comment": "This is untrue; please clarify...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
+    {"User": "JohnD", "Comment": "Suspicious activity near...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
+    {"User": "JaneSmith", "Comment": "This is untrue; please clarify...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
+    {"User": "JaneSmith", "Comment": "This is untrue; please clarify...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
+    {"User": "JohnD", "Comment": "Suspicious activity near...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
+  ];
+
+  final int itemsPerPage = 4;
 
   final RxInt currentPage = 1.obs;
 

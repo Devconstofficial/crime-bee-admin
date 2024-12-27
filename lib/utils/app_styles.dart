@@ -49,8 +49,10 @@ class AppStyles {
 
   EdgeInsets get horizontal => const EdgeInsets.symmetric(horizontal: 20.0);
   EdgeInsets get horizontal28 => const EdgeInsets.symmetric(horizontal: 28.0);
-  EdgeInsets get appBarPadding => const EdgeInsets.only(left: 28.0,right: 10);
+  EdgeInsets get appBarPadding => const EdgeInsets.only(left: 28.0,right: 10,top: 30);
   EdgeInsets get horizontal16 => const EdgeInsets.symmetric(horizontal: 16.0);
+  EdgeInsets get horizontal24 => const EdgeInsets.symmetric(horizontal: 24.0);
+  EdgeInsets get vertical24 => const EdgeInsets.symmetric(vertical: 24.0);
   EdgeInsets get horizontal8 => const EdgeInsets.symmetric(horizontal: 8.0);
   EdgeInsets get paginationBtnPadding => const EdgeInsets.symmetric(horizontal: 6.0);
   EdgeInsets get paddingAll20 => const EdgeInsets.all(20.0);

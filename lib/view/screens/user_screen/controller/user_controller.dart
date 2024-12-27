@@ -6,6 +6,23 @@ import '../../../../utils/app_colors.dart';
 
 class UserController extends GetxController {
   var selectedCrimeType = ''.obs;
+  RxList notifications = [].obs;
+  RxList activities = [].obs;
+  var selectedFilters = <String>{}.obs;
+  var isNotificationVisible = false.obs;
+
+
+  void toggleNotificationVisibility() {
+    isNotificationVisible.value = !isNotificationVisible.value;
+  }
+
+  void toggleFilter(String filter) {
+    if (selectedFilters.contains(filter)) {
+      selectedFilters.remove(filter);
+    } else {
+      selectedFilters.add(filter);
+    }
+  }
 
   final List<Map<String, dynamic>> allUsers = [
     {"id": "00001", "name": "Christine Brooks", "reports": 35, "status": "Suspended","statusBackColor" : kLightBlue.withOpacity(0.2), "StatusColor" : kLightBlue},
@@ -22,6 +39,31 @@ class UserController extends GetxController {
     {"id": "00012", "name": "Charles Moore", "reports": 20, "status": "Ban","statusBackColor" : kPrimaryColor.withOpacity(0.2), "StatusColor" : kPrimaryColor},
     {"id": "00013", "name": "Jennifer White", "reports": 29, "status": "Active","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
   ];
+
+  void fetchNotifications() {
+    notifications.addAll([
+      {'title': 'New Host registered', 'time': '59 minutes ago', "backColor" : kPrimaryColor,},
+      {'title': 'New Crime Reported', 'time': '1 hour ago',"backColor" : kOrangeColor,},
+      {'title': 'Crime Resolved', 'time': '2 hours ago',"backColor" : kLightBlue,},
+      {'title': 'Update on your case', 'time': '3 hours ago',"backColor" : kGrey,},
+    ]);
+  }
+
+  void fetchActivities() {
+    activities.addAll([
+      {'title': 'Ahmad just cancelled his...', 'time': 'Just now',"backColor" : kPrimaryColor,},
+      {'title': 'John updated the crime report...', 'time': '5 minutes ago',"backColor" : kOrangeColor,},
+      {'title': 'Jane resolved a case', 'time': '10 minutes ago',"backColor" : kLightBlue,},
+      {'title': 'System generated report', 'time': '1 hour ago',"backColor" : kGrey,},
+    ]);
+  }
+
+  @override
+  onInit(){
+    super.onInit();
+    fetchNotifications();
+    fetchActivities();
+  }
 
   final int itemsPerPage = 7;
 

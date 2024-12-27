@@ -2,29 +2,73 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../utils/app_colors.dart';
+import '../../../../utils/app_images.dart';
+import '../../../models/comment_model.dart';
 
 class BlogController extends GetxController {
   var selectedBlogType = ''.obs;
   var selectedBlogStatus = ''.obs;
+  RxList notifications = [].obs;
+  RxList activities = [].obs;
+  var selectedFilters = <String>{}.obs;
+
+  void toggleFilter(String filter) {
+    if (selectedFilters.contains(filter)) {
+      selectedFilters.remove(filter);
+    } else {
+      selectedFilters.add(filter);
+    }
+  }
+
+  var isNotificationVisible = false.obs;
+
+  void toggleNotificationVisibility() {
+    isNotificationVisible.value = !isNotificationVisible.value;
+  }
+
+  @override
+  onInit(){
+    super.onInit();
+    fetchNotifications();
+    fetchActivities();
+  }
+
+  void fetchNotifications() {
+    notifications.addAll([
+      {'title': 'New Host registered', 'time': '59 minutes ago', "backColor" : kPrimaryColor,},
+      {'title': 'New Crime Reported', 'time': '1 hour ago',"backColor" : kOrangeColor,},
+      {'title': 'Crime Resolved', 'time': '2 hours ago',"backColor" : kLightBlue,},
+      {'title': 'Update on your case', 'time': '3 hours ago',"backColor" : kGrey,},
+    ]);
+  }
+
+  void fetchActivities() {
+    activities.addAll([
+      {'title': 'Ahmad just cancelled his...', 'time': 'Just now',"backColor" : kPrimaryColor,},
+      {'title': 'John updated the crime report...', 'time': '5 minutes ago',"backColor" : kOrangeColor,},
+      {'title': 'Jane resolved a case', 'time': '10 minutes ago',"backColor" : kLightBlue,},
+      {'title': 'System generated report', 'time': '1 hour ago',"backColor" : kGrey,},
+    ]);
+  }
 
   final List<Map<String, dynamic>> allBlogs = [
-    {"Title": "Crime Safety Tips", "Category": "ABC", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
-    {"Title": "Crime Safety Tips", "Category": "ABC", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
-    {"Title": "Crime Safety Tips", "Category": "ABC", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
-    {"Title": "Crime Safety Tips", "Category": "ABC", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
-    {"Title": "Crime Safety Tips", "Category": "ABC", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
-    {"Title": "Crime Safety Tips", "Category": "ABC", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
+    {"Title": "Crime Safety Tips", "Category": "Tech", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
+    {"Title": "Crime Safety Tips", "Category": "Crime", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
+    {"Title": "Crime Safety Tips", "Category": "Ai", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
+    {"Title": "Crime Safety Tips", "Category": "Tech", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
+    {"Title": "Crime Safety Tips", "Category": "Ai", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
+    {"Title": "Crime Safety Tips", "Category": "Crime", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
   ];
 
   final List<Map<String, dynamic>> allUserBlogs = [
+    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "ABC", "Status": "Approved","statusBackColor" : kLightBlue.withOpacity(0.2), "StatusColor" : kLightBlue},
+    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "John Doe", "Status": "Pending","statusBackColor" : kPrimaryColor.withOpacity(0.2), "StatusColor" : kPrimaryColor},
+    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "John Doe", "Status": "Rejected","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
     {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "Jane Smith", "Status": "Approved","statusBackColor" : kLightBlue.withOpacity(0.2), "StatusColor" : kLightBlue},
     {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "Jane Smith", "Status": "Pending","statusBackColor" : kPrimaryColor.withOpacity(0.2), "StatusColor" : kPrimaryColor},
+    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "John Doe", "Status": "Rejected","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
     {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "Jane Smith", "Status": "Rejected","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
-    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "Jane Smith", "Status": "Approved","statusBackColor" : kLightBlue.withOpacity(0.2), "StatusColor" : kLightBlue},
-    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "Jane Smith", "Status": "Pending","statusBackColor" : kPrimaryColor.withOpacity(0.2), "StatusColor" : kPrimaryColor},
-    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "Jane Smith", "Status": "Rejected","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
-    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "Jane Smith", "Status": "Rejected","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
-    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "Jane Smith", "Status": "Rejected","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
+    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "John Doe", "Status": "Rejected","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
 
   ];
 
@@ -92,12 +136,10 @@ class BlogController extends GetxController {
     }
   }
 
-  // Check if back button should be disabled
   bool get isBackButtonDisabled => currentPage.value == 1;
 
   bool get isBackButtonDisabled1 => userBlogsCurrentPage.value == 1;
 
-  // Check if next button should be disabled
   bool get isNextButtonDisabled => currentPage.value == totalPages;
   bool get isNextButtonDisabled1 => userBlogsCurrentPage.value == userBlogTotalPages;
 }

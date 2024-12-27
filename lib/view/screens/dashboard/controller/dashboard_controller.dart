@@ -6,8 +6,24 @@ import '../../../../utils/app_colors.dart';
 
 class DashboardController extends GetxController {
   RxList<BarChartGroupData> barChartData = <BarChartGroupData>[].obs;
-  RxList<Map<String, dynamic>> notifications = <Map<String, dynamic>>[].obs;
-  RxList<Map<String, dynamic>> activities = <Map<String, dynamic>>[].obs;
+  RxList notifications = [].obs;
+  RxList activities = [].obs;
+  var selectedValue = 'Last 7 Days'.obs;
+  var selectedValue1 = 'Last 7 Days'.obs;
+  var selectedTodayValue = 'Today'.obs;
+
+  void updateValue(String value) {
+    selectedValue.value = value;
+  }
+
+  void updateValue2(String value) {
+    selectedValue1.value = value;
+  }
+
+  void updateValue1(String value) {
+    selectedTodayValue.value = value;
+  }
+
 
   @override
   onInit(){
@@ -35,30 +51,74 @@ class DashboardController extends GetxController {
     ]);
   }
 
-  void generateBarChartData() {
-    List<BarChartGroupData> rawData = [
-      BarChartGroupData(x: 0, barRods: [BarChartRodData(toY: 60, color: kPrimaryColor, width: 30)]),
-      BarChartGroupData(x: 1, barRods: [BarChartRodData(toY: 40, color: kPrimaryColor, width: 30)]),
-      BarChartGroupData(x: 2, barRods: [BarChartRodData(toY: 20, color: kPrimaryColor, width: 30)]),
-      BarChartGroupData(x: 3, barRods: [BarChartRodData(toY: 120, color: kPrimaryColor, width: 30)]),
-      BarChartGroupData(x: 4, barRods: [BarChartRodData(toY: 160, color: kPrimaryColor, width: 30)]),
-      BarChartGroupData(x: 5, barRods: [BarChartRodData(toY: 100, color: kPrimaryColor, width: 30)]),
-      BarChartGroupData(x: 6, barRods: [BarChartRodData(toY: 60, color: kPrimaryColor, width: 30)]),
-    ];
+  // void generateBarChartData() {
+  //   List<BarChartGroupData> rawData = [
+  //     BarChartGroupData(x: 0, barRods: [BarChartRodData(toY: 60, color: kPrimaryColor, width: 30)]),
+  //     BarChartGroupData(x: 1, barRods: [BarChartRodData(toY: 40, color: kPrimaryColor, width: 30)]),
+  //     BarChartGroupData(x: 2, barRods: [BarChartRodData(toY: 20, color: kPrimaryColor, width: 30)]),
+  //     BarChartGroupData(x: 3, barRods: [BarChartRodData(toY: 120, color: kPrimaryColor, width: 30)]),
+  //     BarChartGroupData(x: 4, barRods: [BarChartRodData(toY: 160, color: kPrimaryColor, width: 30)]),
+  //     BarChartGroupData(x: 5, barRods: [BarChartRodData(toY: 100, color: kPrimaryColor, width: 30)]),
+  //     BarChartGroupData(x: 6, barRods: [BarChartRodData(toY: 60, color: kPrimaryColor, width: 30)]),
+  //   ];
+  //
+  //   barChartData.value = rawData.map((data) {
+  //     double maxBarHeight = 160.0;
+  //     return BarChartGroupData(
+  //       x: data.x,
+  //       barsSpace: 4,
+  //       barRods: [
+  //         // Unfilled bar
+  //         BarChartRodData(
+  //           toY: maxBarHeight,
+  //           color: kFieldBorderColor,
+  //           width: data.barRods.first.width,
+  //           borderRadius: BorderRadius.circular(8),
+  //         ),
+  //         // Filled bar
+  //         BarChartRodData(
+  //           toY: data.barRods.first.toY,
+  //           color: kPrimaryColor,
+  //           width: data.barRods.first.width,
+  //           borderRadius: BorderRadius.circular(8),
+  //         ),
+  //       ],
+  //     );
+  //   }).toList();
+  //
+  // }
 
-    barChartData.value = rawData.map((data) {
+  void generateBarChartData() {
+    List<double> rawData = [60, 40, 20, 120, 160, 100, 60];
+    double maxBarHeight = 160.0;
+
+    barChartData.value = rawData.asMap().entries.map((entry) {
+      int index = entry.key;
+      double value = entry.value;
+
       return BarChartGroupData(
-        x: data.x,
+        x: index,
         barRods: [
           BarChartRodData(
-            toY: data.barRods.first.toY,
-            color: kPrimaryColor,
-            width: 15,
+            toY: maxBarHeight,
+            color: kWhiteColor,
+            borderSide: const BorderSide(color: kTableBorderColor),
+            width: 10,
+            borderRadius: BorderRadius.circular(8),
+            rodStackItems: [
+              BarChartRodStackItem(
+                  0,
+                  value,
+                  kPrimaryColor,
+
+              ),
+            ],
           ),
         ],
       );
     }).toList();
   }
+
 
   RxMap<String, double> dataMap = {
     '1-25': 10.0,

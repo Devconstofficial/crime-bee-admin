@@ -34,3 +34,4 @@ const Color kDisableBtnTextColor = Color(0xFFADB5BD);
 const Color kLocationIconColor = Color(0xFF343A40);
 const Color kLoginDetailColor = Color(0xFF49475A);
 const Color kOrangeColor = Color(0xFFFFA500);
+const Color kActionsBtnColor = Color(0xFFFAFBFD);

@@ -10,6 +10,9 @@ import '../../../utils/app_images.dart';
 import '../../../utils/app_styles.dart';
 import '../../../utils/common_code.dart';
 import '../../side_menu/side_menu.dart';
+import '../../widgets/delete_dialog.dart';
+import '../../widgets/filter_btn.dart';
+import '../../widgets/notifiction_panel.dart';
 import 'controller/notification_controller.dart';
 
 class NotificationScreen extends GetView<NotificationController> {
@@ -52,11 +55,11 @@ class NotificationScreen extends GetView<NotificationController> {
                 style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
               ),
               Container(
-                height: 40,
+                height: 48,
                 width: width,
                 decoration: BoxDecoration(
                     color: kBackGroundColor,
-                    borderRadius: AppStyles.customBorder8,border: Border.all(color: kBorderColor)),
+                    borderRadius: AppStyles.customBorder8,border: Border.all(color: kFieldBorderColor)),
                 child: Obx(() {
                   return DropdownButton<String>(
                     borderRadius: AppStyles.customBorder8,
@@ -68,7 +71,7 @@ class NotificationScreen extends GetView<NotificationController> {
                     hint: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Text(
-                        kCategory,
+                        "type",
                         style: AppStyles.workSansTextStyle().copyWith(
                             fontSize: 14, color: kHintColor),
                       ),
@@ -79,7 +82,7 @@ class NotificationScreen extends GetView<NotificationController> {
                           size: 25, color: kBlackColor.withOpacity(0.4)),
                     ),
                     underline: const SizedBox.shrink(),
-                    items: ['Tech', 'Crime', 'Health']
+                    items: ['Crime Alert', 'General', 'Update']
                         .map((String crime) => DropdownMenuItem<String>(
                       value: crime,
                       child: Padding(
@@ -103,7 +106,7 @@ class NotificationScreen extends GetView<NotificationController> {
                 "Title",
                 style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
               ),
-              MyCustomTextField(
+              const MyCustomTextField(
                 hintText: "Title",
                 fillColor: kBackGroundColor,
                 borderColor: kFieldBorderColor,
@@ -113,7 +116,7 @@ class NotificationScreen extends GetView<NotificationController> {
                 "Description",
                 style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
               ),
-              MyCustomTextField(
+              const MyCustomTextField(
                 hintText: "Description",
                 fillColor: kBackGroundColor,
                 borderColor: kFieldBorderColor,
@@ -124,11 +127,11 @@ class NotificationScreen extends GetView<NotificationController> {
                 style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
               ),
               Container(
-                height: 40,
+                height: 48,
                 width: width,
                 decoration: BoxDecoration(
                     color: kBackGroundColor,
-                    borderRadius: AppStyles.customBorder8,border: Border.all(color: kBorderColor)),
+                    borderRadius: AppStyles.customBorder8,border: Border.all(color: kFieldBorderColor)),
                 child: Obx(() {
                   return DropdownButton<String>(
                     borderRadius: AppStyles.customBorder8,
@@ -140,7 +143,7 @@ class NotificationScreen extends GetView<NotificationController> {
                     hint: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Text(
-                        kCategory,
+                        "All users",
                         style: AppStyles.workSansTextStyle().copyWith(
                             fontSize: 14, color: kHintColor),
                       ),
@@ -187,6 +190,166 @@ class NotificationScreen extends GetView<NotificationController> {
     );
   }
 
+  Widget filterPopup(BuildContext context) {
+    return Dialog(
+      backgroundColor: kWhiteColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppStyles.customBorder8,
+      ),
+      child: SizedBox(
+        width: 400,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: AppStyles().vertical24,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: AppStyles().horizontal24,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Select Push Notifications",
+                        style: AppStyles.workSansTextStyle()
+                            .copyWith(fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          Obx(() {
+                            return FilterButton(
+                              text: "Crime Alert",
+                              height: 34,
+                              onTap: () {
+                                controller.toggleFilter("Crime Alert");
+                              },
+                              width: 128,
+                              borderColor: controller.selectedFilters.contains("Crime Alert")
+                                  ? kWhiteColor
+                                  : kActionsButtonColor,
+                              color: controller.selectedFilters.contains("Crime Alert")
+                                  ? kPrimaryColor
+                                  : kWhiteColor,
+                              fontSize: 14,
+                              textColor: controller.selectedFilters.contains("Crime Alert")
+                                  ? kWhiteColor
+                                  : kBlackColor,
+                            );
+                          },),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          Obx(() {
+                            return FilterButton(
+                              text: "Update",
+                              height: 34,
+                              onTap: () {
+                                controller.toggleFilter("Update");
+                              },
+                              width: 100,
+                              borderColor:
+                              controller.selectedFilters.contains("Update")
+                                  ? kWhiteColor
+                                  : kActionsButtonColor,
+                              color: controller.selectedFilters.contains("Update")
+                                  ? kPrimaryColor
+                                  : kWhiteColor,
+                              fontSize: 14,
+                              textColor: controller.selectedFilters.contains("Update")
+                                  ? kWhiteColor
+                                  : kBlackColor,);
+                          },),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          Obx(() {
+                            return FilterButton(
+                              text: "General",
+                              height: 34,
+                              onTap: () {
+                                controller.toggleFilter("General");
+                              },
+                              width: 91,
+                              borderColor: controller.selectedFilters.contains("General")
+                                  ? kWhiteColor
+                                  : kActionsButtonColor,
+                              color: controller.selectedFilters.contains("General")
+                                  ? kPrimaryColor
+                                  : kWhiteColor,
+                              fontSize: 14,
+                              textColor: controller.selectedFilters.contains("General")
+                                  ? kWhiteColor
+                                  : kBlackColor,);
+                          },),
+                        ],
+                      ),
+
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 44,),
+                const Divider(),
+                const SizedBox(
+                  height: 8,
+                ),
+                Padding(
+                  padding: AppStyles().horizontal24,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "*You can choose multiple type",
+                        style: AppStyles.workSansTextStyle().copyWith(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            color: kBlackColor1.withOpacity(0.7)),
+                      ),
+                      const SizedBox(
+                        height: 26,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomButton(
+                            text: "Cancel",
+                            height: 40,
+                            onTap: () {
+                              Get.back();
+                              controller.selectedFilters.clear();
+                            },
+                            width: 75,
+                            textColor: kBlackColor,
+                            color: kWhiteColor,
+                            borderColor: kFieldBorderColor,
+                            fontSize: 14,
+                          ),
+                          CustomButton(
+                            text: "ApplyFilter",
+                            height: 40,
+                            onTap: () {
+                              Get.back();
+                            },
+                            width: 110,
+                            color: kPrimaryColor,
+                            fontSize: 14,
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -207,57 +370,72 @@ class NotificationScreen extends GetView<NotificationController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          height: 61,
-                          decoration: const BoxDecoration(
-                              border: Border(bottom: BorderSide(color: kBackGroundColor,width: 2))),
-                          child: Padding(
-                            padding: AppStyles().appBarPadding,
-                            child: Row(
-                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Dashboard/Notifications',style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,color: kLightBlack1),),
-                                const Spacer(),
-                                Container(
-                                  height: 28,
-                                  width: 160,
-                                  decoration: BoxDecoration(
-                                    color: kBackGroundColor,
+                        const SizedBox(height: 21,),
+                        Padding(
+                          padding: AppStyles().horizontal,
+                          child: Row(
+                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Push Notifications",style: AppStyles.workSansTextStyle().copyWith(fontSize: 32.sp,fontWeight: FontWeight.w600),),
+                              const Spacer(),
+                              Container(
+                                height: 28,
+                                width: 252,
+                                decoration: BoxDecoration(
+                                    color: kWhiteColor,
                                     borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const SizedBox(
-                                          width: 130,
-                                          child: MyCustomTextField(
-                                            hintText: 'Search',
-                                            contentPadding: EdgeInsets.all(0),
-                                            prefixIcon: Icon(Icons.search_sharp,size: 13,color: kLightBlackColor,),
+                                    border: Border.all(color: kFieldBorderColor)
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const SizedBox(
+                                        width: 220,
+                                        child: MyCustomTextField(
+                                          hintText: 'Search',
+                                          fillColor: kWhiteColor,
+                                          contentPadding: EdgeInsets.all(0),
+                                          prefixIcon: Icon(
+                                            Icons.search_sharp,
+                                            size: 13,
+                                            color: kLightBlackColor,
                                           ),
                                         ),
-                                        Text(
-                                          '⌘/',
-                                          style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w400,color: kLightBlackColor),
-                                        ),
-                                      ],
+                                      ),
+                                      Text(
+                                        '⌘/',
+                                        style: AppStyles.workSansTextStyle()
+                                            .copyWith(
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w400,
+                                            color: kLightBlackColor),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: GestureDetector(
+                                  onTap: (){
+                                    controller.toggleNotificationVisibility();
+                                  },
+                                  child: SvgPicture.asset(
+                                    kNotificationIcon,
+                                    height: 20,
+                                    width: 20,
+                                    colorFilter: const ColorFilter.mode(
+                                      kLightBlackColor,
+                                      BlendMode.srcIn,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 20),
-                                SvgPicture.asset(
-                                  kNotificationIcon,
-                                  height: 20,
-                                  width: 20,
-                                  colorFilter: const ColorFilter.mode(
-                                    kLightBlackColor,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                         Padding(
@@ -265,15 +443,13 @@ class NotificationScreen extends GetView<NotificationController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 11,),
-                              Text(kUserManagement,style: AppStyles.workSansTextStyle().copyWith(fontSize: 32.sp,fontWeight: FontWeight.w600),),
-                              const SizedBox(height: 32,),
+                              const SizedBox(height: 10,),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(
                                     height: 70,
-                                    width: 425,
+                                    width: 287,
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
                                         color: kFilterContainerColor,
@@ -296,14 +472,21 @@ class NotificationScreen extends GetView<NotificationController> {
                                           width: 1,
                                           color: kLightGreyColor,
                                         ),
-                                        Text(kDate,style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w600),),
-                                        const Icon(Icons.keyboard_arrow_down_outlined,size: 17,color: kPrimaryColor,),
-                                        Container(
-                                          width: 1,
-                                          color: kLightGreyColor,
-                                        ),
                                         Text("Type",style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w600),),
-                                        const Icon(Icons.keyboard_arrow_down_outlined,size: 17,color: kPrimaryColor,),
+                                        InkWell(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return filterPopup(context);
+                                                },
+                                              );
+                                            },
+                                            child: const Icon(
+                                              Icons.keyboard_arrow_down_outlined,
+                                              size: 24,
+                                              color: kPrimaryColor,
+                                            )),
                                       ],
                                     ),
                                   ),
@@ -401,6 +584,7 @@ class NotificationScreen extends GetView<NotificationController> {
                                             ),
                                           ),
                                           DataColumn(
+                                            headingRowAlignment: MainAxisAlignment.center,
                                             label: Flexible(
                                               child: Text(
                                                 kActions,
@@ -424,6 +608,7 @@ class NotificationScreen extends GetView<NotificationController> {
                                             context
                                         ))
                                             .toList(),
+                                        dataRowMaxHeight: 65,
                                       ),
                                     ),
                                   ],
@@ -530,12 +715,15 @@ class NotificationScreen extends GetView<NotificationController> {
                     ),
                   ),
                 ),
-                // Container(
-                //   width: 200,
-                //   decoration: const BoxDecoration(
-                //       border: Border(left: BorderSide(color: kBackGroundColor,width: 2))
-                //   ),
-                // )
+                Obx(() {
+                  return Visibility(
+                    visible: controller.isNotificationVisible.value,
+                    child: NotificationAndActivitySection(
+                      notifications: controller.notifications,
+                      activities: controller.activities,
+                    ),
+                  );
+                }),
               ],
             ),
           );
@@ -558,30 +746,52 @@ class NotificationScreen extends GetView<NotificationController> {
           Center(
             child: Container(
               height: 32,
-              // width: 96,
+              width: 96,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: kBackGroundColor,
+                  borderRadius: AppStyles.customBorder8,
+                  color: kActionsBtnColor,
                   border: Border.all(color: kTableBorderColor)
               ),
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 9,horizontal: width * 0.01),
+                padding: const EdgeInsets.symmetric(vertical: 6),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    SvgPicture.asset(
-                      kEditIcon,
-                      height: 15,
-                      width: 15,
+                    InkWell(
+                      onTap: (){
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return addNotiDialogue(context);
+                          },
+                        );
+                      },
+                      child: SvgPicture.asset(
+                        kEditIcon,
+                        height: 17,
+                        width: 17,
+                      ),
                     ),
                     Container(
                       width: 1,
                       color: kLightGreyColor,
                     ),
-                    SvgPicture.asset(
-                      kDeleteIcon,
-                      height: 15,
-                      width: 15,
+                    InkWell(
+                      onTap: (){
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return DeleteDialog(onDelete: () {
+                              Get.back();
+                            },);
+                          },
+                        );
+                      },
+                      child: SvgPicture.asset(
+                        kDeleteIcon,
+                        height: 15,
+                        width: 15,
+                      ),
                     ),
                   ],
                 ),
@@ -591,4 +801,5 @@ class NotificationScreen extends GetView<NotificationController> {
         ),
       ],
     );
-  }}
+  }
+}

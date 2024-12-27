@@ -1,9 +1,6 @@
 import 'package:crime_bee_admin/utils/app_strings.dart';
-import 'package:crime_bee_admin/view/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:fl_chart/fl_chart.dart' as fl;
 import 'package:crime_bee_admin/view/widgets/custom_textField.dart';
-import 'package:crime_bee_admin/view/widgets/dashboard-container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -14,6 +11,9 @@ import '../../../utils/app_styles.dart';
 import '../../../utils/common_code.dart';
 import '../../side_menu/side_menu.dart';
 import '../../widgets/custom_button.dart';
+import '../../widgets/delete_dialog.dart';
+import '../../widgets/filter_btn.dart';
+import '../../widgets/notifiction_panel.dart';
 import 'controller/blog_controller.dart';
 
 class BlogScreen extends GetView<BlogController> {
@@ -56,7 +56,7 @@ class BlogScreen extends GetView<BlogController> {
                   "Title",
                   style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
                 ),
-                MyCustomTextField(
+                const MyCustomTextField(
                   hintText: "Title",
                   fillColor: kBackGroundColor,
                   borderColor: kFieldBorderColor,
@@ -67,11 +67,11 @@ class BlogScreen extends GetView<BlogController> {
                   style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
                 ),
                 Container(
-                  height: 40,
+                  height: 48,
                   width: width,
                   decoration: BoxDecoration(
                       color: kBackGroundColor,
-                      borderRadius: AppStyles.customBorder8,border: Border.all(color: kBorderColor)),
+                      borderRadius: AppStyles.customBorder8,border: Border.all(color: kFieldBorderColor)),
                   child: Obx(() {
                     return DropdownButton<String>(
                       borderRadius: AppStyles.customBorder8,
@@ -113,16 +113,12 @@ class BlogScreen extends GetView<BlogController> {
                     );
                   }),
                 ),
-                Text(
-                  kLocation,
-                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
-                ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
                 Text(
                   "Description",
                   style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
                 ),
-                MyCustomTextField(
+                const MyCustomTextField(
                   hintText: "Description",
                   fillColor: kBackGroundColor,
                   borderColor: kFieldBorderColor,
@@ -167,8 +163,10 @@ class BlogScreen extends GetView<BlogController> {
                   children: [
                     CustomButton(text: "Cancel", height: 40, onTap: (){
                       Get.back();
-                    },width: 75,textColor: kBlackColor,color: kWhiteColor,borderColor: kFieldBorderColor,),
-                    CustomButton(text: "Add Blog", height: 40, onTap: (){},width: 90,color: kPrimaryColor),
+                    },width: 75,textColor: kBlackColor,color: kWhiteColor,borderColor: kFieldBorderColor,fontSize: 14.sp,),
+                    CustomButton(text: "Add Blog", height: 40, onTap: (){
+
+                    },width: 90,color: kPrimaryColor,fontSize: 14.sp,),
                   ],
                 )
               ],
@@ -269,10 +267,170 @@ class BlogScreen extends GetView<BlogController> {
                   children: [
                     CustomButton(text: "Cancel", height: 40, onTap: (){
                       Get.back();
-                    },width: 75,textColor: kBlackColor,color: kWhiteColor,borderColor: kFieldBorderColor,),
-                    CustomButton(text: "Update Now", height: 40, onTap: (){},width: 110,color: kPrimaryColor),
+                    },width: 75,textColor: kBlackColor,color: kWhiteColor,borderColor: kFieldBorderColor,fontSize: 14.sp,),
+                    CustomButton(text: "Update Now", height: 40, onTap: (){},width: 110,color: kPrimaryColor,fontSize: 14.sp,),
                   ],
                 )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget filterPopup(BuildContext context) {
+    return Dialog(
+      backgroundColor: kWhiteColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppStyles.customBorder8,
+      ),
+      child: SizedBox(
+        width: 400,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: AppStyles().vertical24,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: AppStyles().horizontal24,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Select Blog Category",
+                        style: AppStyles.workSansTextStyle()
+                            .copyWith(fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          Obx(() {
+                            return FilterButton(
+                              text: "Tech",
+                              height: 34,
+                              onTap: () {
+                                controller.toggleFilter("Tech");
+                              },
+                              width: 82,
+                              borderColor: controller.selectedFilters.contains("Tech")
+                                  ? kWhiteColor
+                                  : kActionsButtonColor,
+                              color: controller.selectedFilters.contains("Tech")
+                                  ? kPrimaryColor
+                                  : kWhiteColor,
+                              fontSize: 14,
+                              textColor: controller.selectedFilters.contains("Tech")
+                                  ? kWhiteColor
+                                  : kBlackColor,
+                            );
+                          },),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          Obx(() {
+                            return FilterButton(
+                              text: "Ai",
+                              height: 34,
+                              onTap: () {
+                                controller.toggleFilter("Ai");
+                              },
+                              width: 64,
+                              borderColor:
+                              controller.selectedFilters.contains("Ai")
+                                  ? kWhiteColor
+                                  : kActionsButtonColor,
+                              color: controller.selectedFilters.contains("Ai")
+                                  ? kPrimaryColor
+                                  : kWhiteColor,
+                              fontSize: 14,
+                              textColor: controller.selectedFilters.contains("Ai")
+                                  ? kWhiteColor
+                                  : kBlackColor,);
+                          },),
+
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          Obx(() {
+                            return FilterButton(
+                              text: "Crime",
+                              height: 34,
+                              onTap: () {
+                                controller.toggleFilter("Crime");
+                              },
+                              width: 91,
+                              borderColor: controller.selectedFilters.contains("Crime")
+                                  ? kWhiteColor
+                                  : kActionsButtonColor,
+                              color: controller.selectedFilters.contains("Crime")
+                                  ? kPrimaryColor
+                                  : kWhiteColor,
+                              fontSize: 14,
+                              textColor: controller.selectedFilters.contains("Crime")
+                                  ? kWhiteColor
+                                  : kBlackColor,);
+                          },),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 44,),
+                const Divider(),
+                const SizedBox(
+                  height: 8,
+                ),
+                Padding(
+                  padding: AppStyles().horizontal24,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "*You can choose multiple type",
+                        style: AppStyles.workSansTextStyle().copyWith(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            color: kBlackColor1.withOpacity(0.7)),
+                      ),
+                      const SizedBox(
+                        height: 26,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomButton(
+                            text: "Cancel",
+                            height: 40,
+                            onTap: () {
+                              Get.back();
+                              controller.selectedFilters.clear();
+                            },
+                            width: 75,
+                            textColor: kBlackColor,
+                            color: kWhiteColor,
+                            borderColor: kFieldBorderColor,
+                            fontSize: 14,
+                          ),
+                          CustomButton(
+                            text: "ApplyFilter",
+                            height: 40,
+                            onTap: () {
+                              Get.back();
+                            },
+                            width: 110,
+                            color: kPrimaryColor,
+                            fontSize: 14,
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -300,57 +458,72 @@ class BlogScreen extends GetView<BlogController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          height: 61,
-                          decoration: const BoxDecoration(
-                              border: Border(bottom: BorderSide(color: kBackGroundColor,width: 2))),
-                          child: Padding(
-                            padding: AppStyles().appBarPadding,
-                            child: Row(
-                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Dashboard/Comments',style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,color: kLightBlack1),),
-                                const Spacer(),
-                                Container(
-                                  height: 28,
-                                  width: 160,
-                                  decoration: BoxDecoration(
-                                    color: kBackGroundColor,
+                        const SizedBox(height: 21,),
+                        Padding(
+                          padding: AppStyles().horizontal,
+                          child: Row(
+                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Blogs",style: AppStyles.workSansTextStyle().copyWith(fontSize: 32.sp,fontWeight: FontWeight.w600),),
+                              const Spacer(),
+                              Container(
+                                height: 28,
+                                width: 252,
+                                decoration: BoxDecoration(
+                                    color: kWhiteColor,
                                     borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const SizedBox(
-                                          width: 130,
-                                          child: MyCustomTextField(
-                                            hintText: 'Search',
-                                            contentPadding: EdgeInsets.all(0),
-                                            prefixIcon: Icon(Icons.search_sharp,size: 13,color: kLightBlackColor,),
+                                    border: Border.all(color: kFieldBorderColor)
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const SizedBox(
+                                        width: 220,
+                                        child: MyCustomTextField(
+                                          hintText: 'Search',
+                                          fillColor: kWhiteColor,
+                                          contentPadding: EdgeInsets.all(0),
+                                          prefixIcon: Icon(
+                                            Icons.search_sharp,
+                                            size: 13,
+                                            color: kLightBlackColor,
                                           ),
                                         ),
-                                        Text(
-                                          '⌘/',
-                                          style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w400,color: kLightBlackColor),
-                                        ),
-                                      ],
+                                      ),
+                                      Text(
+                                        '⌘/',
+                                        style: AppStyles.workSansTextStyle()
+                                            .copyWith(
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w400,
+                                            color: kLightBlackColor),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: GestureDetector(
+                                  onTap: (){
+                                    controller.toggleNotificationVisibility();
+                                  },
+                                  child: SvgPicture.asset(
+                                    kNotificationIcon,
+                                    height: 20,
+                                    width: 20,
+                                    colorFilter: const ColorFilter.mode(
+                                      kLightBlackColor,
+                                      BlendMode.srcIn,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 20),
-                                SvgPicture.asset(
-                                  kNotificationIcon,
-                                  height: 20,
-                                  width: 20,
-                                  colorFilter: const ColorFilter.mode(
-                                    kLightBlackColor,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                         Padding(
@@ -358,15 +531,13 @@ class BlogScreen extends GetView<BlogController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 11,),
-                              Text("Blogs",style: AppStyles.workSansTextStyle().copyWith(fontSize: 32.sp,fontWeight: FontWeight.w600),),
-                              const SizedBox(height: 32,),
+                              const SizedBox(height: 10,),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(
                                     height: 70,
-                                    width: 425,
+                                    width: 319,
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
                                         color: kFilterContainerColor,
@@ -389,26 +560,35 @@ class BlogScreen extends GetView<BlogController> {
                                           width: 1,
                                           color: kLightGreyColor,
                                         ),
-                                        Text(kDate,style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w600),),
-                                        const Icon(Icons.keyboard_arrow_down_outlined,size: 17,color: kPrimaryColor,),
-                                        Container(
-                                          width: 1,
-                                          color: kLightGreyColor,
-                                        ),
                                         Text(kCategory,style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w600),),
-                                        const Icon(Icons.keyboard_arrow_down_outlined,size: 17,color: kPrimaryColor,),
-
-                                      ],
+                                        InkWell(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return filterPopup(context);
+                                                },
+                                              );
+                                            },
+                                            child: const Icon(
+                                              Icons.keyboard_arrow_down_outlined,
+                                              size: 24,
+                                              color: kPrimaryColor,
+                                            )),
+                                        ],
                                     ),
                                   ),
-                                  CustomButton(text: "Add New Blog", height: 56,width: 173 ,onTap: (){
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return addBlogDialogue(context);
-                                      },
-                                    );
-                                  })
+                                  MouseRegion(
+                                    cursor: SystemMouseCursors.click,
+                                    child: CustomButton(text: "Add New Blog", height: 56,width: 173 ,onTap: (){
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return addBlogDialogue(context);
+                                        },
+                                      );
+                                    }),
+                                  )
                                 ],
                               ),
                               const SizedBox(height: 32,),
@@ -522,6 +702,7 @@ class BlogScreen extends GetView<BlogController> {
                                             context
                                         ))
                                             .toList(),
+                                        dataRowMaxHeight: 65,
                                       ),
                                     ),
                                   ],
@@ -622,7 +803,7 @@ class BlogScreen extends GetView<BlogController> {
                                 ],
                               ),
                               const SizedBox(height: 51,),
-                              Text("Blogs",style: AppStyles.workSansTextStyle().copyWith(fontSize: 32.sp,fontWeight: FontWeight.w600),),
+                              Text("User Blogs",style: AppStyles.workSansTextStyle().copyWith(fontSize: 32.sp,fontWeight: FontWeight.w600),),
                               const SizedBox(height: 32,),
                               Container(
                                 width: width,
@@ -736,6 +917,7 @@ class BlogScreen extends GetView<BlogController> {
                                             context
                                         ))
                                             .toList(),
+                                        dataRowMaxHeight: 65,
                                       ),
                                     ),
                                   ],
@@ -842,12 +1024,15 @@ class BlogScreen extends GetView<BlogController> {
                     ),
                   ),
                 ),
-                // Container(
-                //   width: 200,
-                //   decoration: const BoxDecoration(
-                //       border: Border(left: BorderSide(color: kBackGroundColor,width: 2))
-                //   ),
-                // )
+                Obx(() {
+                  return Visibility(
+                    visible: controller.isNotificationVisible.value,
+                    child: NotificationAndActivitySection(
+                      notifications: controller.notifications,
+                      activities: controller.activities,
+                    ),
+                  );
+                }),
               ],
             ),
           );
@@ -872,30 +1057,50 @@ class BlogScreen extends GetView<BlogController> {
           Center(
             child: Container(
               height: 32,
-              // width: 96,
+              width: 96,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: kBackGroundColor,
+                  borderRadius: AppStyles.customBorder8,
+                  color: kActionsBtnColor,
                   border: Border.all(color: kTableBorderColor)
               ),
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 9,horizontal: width * 0.01),
+                padding: const EdgeInsets.symmetric(vertical: 6),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    SvgPicture.asset(
-                      kEditIcon,
-                      height: 15,
-                      width: 15,
+                    InkWell(
+                      onTap: (){
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return statusUpdateDialogue(context);
+                          },
+                        );
+                      },
+                      child: SvgPicture.asset(
+                        kEditIcon,
+                        height: 18,
+                        width: 18,
+                      ),
                     ),
                     Container(
                       width: 1,
                       color: kLightGreyColor,
                     ),
-                    SvgPicture.asset(
-                      kDeleteIcon,
-                      height: 15,
-                      width: 15,
+                    InkWell(
+                      onTap: (){
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return DeleteDialog(onDelete: () {  },);
+                          },
+                        );
+                      },
+                      child: SvgPicture.asset(
+                        kDeleteIcon,
+                        height: 15,
+                        width: 15,
+                      ),
                     ),
 
                   ],
@@ -907,6 +1112,7 @@ class BlogScreen extends GetView<BlogController> {
       ],
     );
   }
+
   DataRow _buildBlogDataRow(String title, String submissionDate, String submittedBy, String status,Color statusBackColor, Color statusColor,context) {
     double width = MediaQuery.of(context).size.width;
 
@@ -943,14 +1149,14 @@ class BlogScreen extends GetView<BlogController> {
           Center(
             child: Container(
               height: 32,
-              // width: 96,
+              width: 96,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: kBackGroundColor,
+                  borderRadius: AppStyles.customBorder8,
+                  color: kActionsBtnColor,
                   border: Border.all(color: kTableBorderColor)
               ),
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 9,horizontal: width * 0.01),
+                padding: const EdgeInsets.symmetric(vertical: 6),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -965,18 +1171,28 @@ class BlogScreen extends GetView<BlogController> {
                       },
                       child: SvgPicture.asset(
                         kEditIcon,
-                        height: 15,
-                        width: 15,
+                        height: 18,
+                        width: 18,
                       ),
                     ),
                     Container(
                       width: 1,
                       color: kLightGreyColor,
                     ),
-                    SvgPicture.asset(
-                      kDeleteIcon,
-                      height: 15,
-                      width: 15,
+                    InkWell(
+                      onTap: (){
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return DeleteDialog(onDelete: () {  },);
+                          },
+                        );
+                      },
+                      child: SvgPicture.asset(
+                        kDeleteIcon,
+                        height: 15,
+                        width: 15,
+                      ),
                     ),
 
                   ],

@@ -26,7 +26,12 @@ String kPushNotifications = 'Push Notifications';
 String kCreateNotifications = 'Create notifications';
 String kTypeofCrime = 'Type of crime';
 String kSeverityLevel = 'Severity level';
+String kSeverity = 'Severity';
 String kDateTimeIncident = 'Date and time of the incident';
+String kDateIncident = 'Date of the incident';
+String kTimeIncident = 'Time of the incident';
+String kTheftDetail = 'Reported theft at Central Park, London. A black backpack stolen near the fountain. Suspect description: male, mid-30s, wearing a grey hoodie. Incident occurred at 3:00 PM';
+String kDeleteDetail = 'Are you sure you want to delete this item? This action is irreversible and will permanently remove the selected record from the system.';
 
 
 // Routs

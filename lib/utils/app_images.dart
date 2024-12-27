@@ -19,6 +19,10 @@ String kSubscriptionIcon = "$basePathIcons/subscription.svg";
 String kUserIcon = "$basePathIcons/user.svg";
 String kClownIcon = "$basePathIcons/clown.svg";
 String kArrowIcon = "$basePathIcons/arrow.svg";
+String kDeleteDialogIcon = "$basePathIcons/deleteDialog.svg";
+String kLocationIcon = "$basePathIcons/location.png";
+String kClockIcon = "$basePathIcons/clock.png";
+String kComment1Icon = "$basePathIcons/comment1.svg";
 
 /// IMAGES
 // String kLogo = "$basePath/logo.png";
@@ -28,3 +32,4 @@ String kUser1 = "$basePath/user1.svg";
 String kUser2 = "$basePath/user2.svg";
 String kUser3 = "$basePath/user3.svg";
 String kUser4 = "$basePath/user4.svg";
+String kUserLogo = "$basePath/userLogo.png";

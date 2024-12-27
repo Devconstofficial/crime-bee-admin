@@ -10,9 +10,171 @@ import '../../../utils/app_images.dart';
 import '../../../utils/app_styles.dart';
 import '../../../utils/common_code.dart';
 import '../../side_menu/side_menu.dart';
+import '../../widgets/custom_button.dart';
+import '../../widgets/filter_btn.dart';
+import '../../widgets/notifiction_panel.dart';
 
 class SubscriptionScreen extends GetView<SubscriptionController> {
   const SubscriptionScreen({super.key});
+
+  Widget filterPopup(BuildContext context) {
+    return Dialog(
+      backgroundColor: kWhiteColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppStyles.customBorder8,
+      ),
+      child: SizedBox(
+        width: 400,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: AppStyles().vertical24,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: AppStyles().horizontal24,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Select Subscription Type",
+                        style: AppStyles.workSansTextStyle()
+                            .copyWith(fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          Obx(() {
+                            return FilterButton(
+                              text: "Monthly",
+                              height: 34,
+                              onTap: () {
+                                controller.toggleFilter("Monthly");
+                              },
+                              width: 87,
+                              borderColor: controller.selectedFilters.contains("Monthly")
+                                  ? kWhiteColor
+                                  : kActionsButtonColor,
+                              color: controller.selectedFilters.contains("Monthly")
+                                  ? kPrimaryColor
+                                  : kWhiteColor,
+                              fontSize: 14,
+                              textColor: controller.selectedFilters.contains("Monthly")
+                                  ? kWhiteColor
+                                  : kBlackColor,
+                            );
+                          },),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          Obx(() {
+                            return FilterButton(
+                              text: "3 Months",
+                              height: 34,
+                              onTap: () {
+                                controller.toggleFilter("3 Months");
+                              },
+                              width: 101,
+                              borderColor:
+                              controller.selectedFilters.contains("3 Months")
+                                  ? kWhiteColor
+                                  : kActionsButtonColor,
+                              color: controller.selectedFilters.contains("3 Months")
+                                  ? kPrimaryColor
+                                  : kWhiteColor,
+                              fontSize: 14,
+                              textColor: controller.selectedFilters.contains("3 Months")
+                                  ? kWhiteColor
+                                  : kBlackColor,);
+                          },),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          Obx(() {
+                            return FilterButton(
+                              text: "Yearly",
+                              height: 34,
+                              onTap: () {
+                                controller.toggleFilter("Yearly");
+                              },
+                              width: 121,
+                              borderColor: controller.selectedFilters.contains("Yearly")
+                                  ? kWhiteColor
+                                  : kActionsButtonColor,
+                              color: controller.selectedFilters.contains("Yearly")
+                                  ? kPrimaryColor
+                                  : kWhiteColor,
+                              fontSize: 14,
+                              textColor: controller.selectedFilters.contains("Yearly")
+                                  ? kWhiteColor
+                                  : kBlackColor,);
+                          },),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 44,),
+                const Divider(),
+                const SizedBox(
+                  height: 8,
+                ),
+                Padding(
+                  padding: AppStyles().horizontal24,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "*You can choose multiple type",
+                        style: AppStyles.workSansTextStyle().copyWith(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            color: kBlackColor1.withOpacity(0.7)),
+                      ),
+                      const SizedBox(
+                        height: 26,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomButton(
+                            text: "Cancel",
+                            height: 40,
+                            onTap: () {
+                              Get.back();
+                              controller.selectedFilters.clear();
+                            },
+                            width: 75,
+                            textColor: kBlackColor,
+                            color: kWhiteColor,
+                            borderColor: kFieldBorderColor,
+                            fontSize: 14,
+                          ),
+                          CustomButton(
+                            text: "ApplyFilter",
+                            height: 40,
+                            onTap: () {
+                              Get.back();
+                            },
+                            width: 110,
+                            color: kPrimaryColor,
+                            fontSize: 14,
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,57 +195,72 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          height: 61,
-                          decoration: const BoxDecoration(
-                              border: Border(bottom: BorderSide(color: kBackGroundColor,width: 2))),
-                          child: Padding(
-                            padding: AppStyles().appBarPadding,
-                            child: Row(
-                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Dashboard/Booking Management',style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,color: kLightBlack1),),
-                                const Spacer(),
-                                Container(
-                                  height: 28,
-                                  width: 160,
-                                  decoration: BoxDecoration(
-                                    color: kBackGroundColor,
+                        SizedBox(height: 21,),
+                        Padding(
+                          padding: AppStyles().horizontal,
+                          child: Row(
+                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(kSubscriptionManagement,style: AppStyles.workSansTextStyle().copyWith(fontSize: 32.sp,fontWeight: FontWeight.w600),),
+                              const Spacer(),
+                              Container(
+                                height: 28,
+                                width: 252,
+                                decoration: BoxDecoration(
+                                    color: kWhiteColor,
                                     borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const SizedBox(
-                                          width: 130,
-                                          child: MyCustomTextField(
-                                            hintText: 'Search',
-                                            contentPadding: EdgeInsets.all(0),
-                                            prefixIcon: Icon(Icons.search_sharp,size: 13,color: kLightBlackColor,),
+                                    border: Border.all(color: kFieldBorderColor)
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const SizedBox(
+                                        width: 220,
+                                        child: MyCustomTextField(
+                                          hintText: 'Search',
+                                          fillColor: kWhiteColor,
+                                          contentPadding: EdgeInsets.all(0),
+                                          prefixIcon: Icon(
+                                            Icons.search_sharp,
+                                            size: 13,
+                                            color: kLightBlackColor,
                                           ),
                                         ),
-                                        Text(
-                                          '⌘/',
-                                          style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w400,color: kLightBlackColor),
-                                        ),
-                                      ],
+                                      ),
+                                      Text(
+                                        '⌘/',
+                                        style: AppStyles.workSansTextStyle()
+                                            .copyWith(
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w400,
+                                            color: kLightBlackColor),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: GestureDetector(
+                                  onTap: (){
+                                    controller.toggleNotificationVisibility();
+                                  },
+                                  child: SvgPicture.asset(
+                                    kNotificationIcon,
+                                    height: 20,
+                                    width: 20,
+                                    colorFilter: const ColorFilter.mode(
+                                      kLightBlackColor,
+                                      BlendMode.srcIn,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 20),
-                                SvgPicture.asset(
-                                  kNotificationIcon,
-                                  height: 20,
-                                  width: 20,
-                                  colorFilter: const ColorFilter.mode(
-                                    kLightBlackColor,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                         Padding(
@@ -91,9 +268,7 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 11,),
-                              Text(kSubscriptionManagement,style: AppStyles.workSansTextStyle().copyWith(fontSize: 32.sp,fontWeight: FontWeight.w600),),
-                              const SizedBox(height: 32,),
+                              const SizedBox(height: 10,),
                               Container(
                                 height: 70,
                                 width: 358,
@@ -120,7 +295,20 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                                       color: kLightGreyColor,
                                     ),
                                     Text("Subscription Type",style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w600),),
-                                    const Icon(Icons.keyboard_arrow_down_outlined,size: 17,color: kPrimaryColor,)
+                                    InkWell(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return filterPopup(context);
+                                            },
+                                          );
+                                        },
+                                        child: const Icon(
+                                          Icons.keyboard_arrow_down_outlined,
+                                          size: 24,
+                                          color: kPrimaryColor,
+                                        )),
                                   ],
                                 ),
                               ),
@@ -238,6 +426,7 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                                             context
                                         ))
                                             .toList(),
+                                        dataRowMaxHeight: 65,
                                       ),
                                     ),
                                   ],
@@ -344,12 +533,15 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                     ),
                   ),
                 ),
-                // Container(
-                //   width: 200,
-                //   decoration: const BoxDecoration(
-                //       border: Border(left: BorderSide(color: kBackGroundColor,width: 2))
-                //   ),
-                // )
+                Obx(() {
+                  return Visibility(
+                    visible: controller.isNotificationVisible.value,
+                    child: NotificationAndActivitySection(
+                      notifications: controller.notifications,
+                      activities: controller.activities,
+                    ),
+                  );
+                }),
               ],
             ),
           );
