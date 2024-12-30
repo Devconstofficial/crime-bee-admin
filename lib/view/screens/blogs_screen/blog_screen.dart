@@ -77,6 +77,7 @@ class BlogScreen extends GetView<BlogController> {
                       borderRadius: AppStyles.customBorder8,
                       isExpanded: true,
                       focusColor: kWhiteColor,
+                      dropdownColor: kWhiteColor,
                       value: controller.selectedBlogType.value.isNotEmpty
                           ? controller.selectedBlogType.value
                           : null,
@@ -124,39 +125,71 @@ class BlogScreen extends GetView<BlogController> {
                   borderColor: kFieldBorderColor,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
-                GestureDetector(
-                  onTap: (){},
-                  child: DottedBorder(
-                    color: kBackGroundColor,
-                    strokeWidth: 5,
-                    padding: const EdgeInsets.all(0),
-                    dashPattern: const [10, 10],
-                    child: Container(
-                      height: 180,
-                      decoration: BoxDecoration(
-                        borderRadius: AppStyles.customBorder8
+                Obx(() {
+                  return GestureDetector(
+                    child: controller.selectedImage.value == null
+                        ? DottedBorder(
+                      color: kBackGroundColor,
+                      strokeWidth: 5,
+                      padding: const EdgeInsets.all(0),
+                      dashPattern: const [10, 10],
+                      child: Container(
+                        height: 180,
+                        decoration: BoxDecoration(
+                            borderRadius: AppStyles.customBorder8
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 24,horizontal: 28),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SvgPicture.asset(
+                                kGalleryIcon,
+                                height: 16,
+                                width: 16,
+                              ),
+                              Text(
+                                "Drag and drop image here, or click add image",
+                                style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w400,color: const Color(0xff858D9D)),
+                              ),
+                              CustomButton(text: "Add Image", height: 40, onTap: (){
+                                controller.pickImage();
+                              },width: 100,color: kBackGroundColor,borderColor: kBackGroundColor,textColor: kBlackColor,),
+                            ],
+                          ),
+                        ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 24,horizontal: 28),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SvgPicture.asset(
-                              kGalleryIcon,
-                              height: 16,
-                              width: 16,
+                    )
+                        : DottedBorder(
+                      color: kBackGroundColor,
+                      strokeWidth: 5,
+                      padding: const EdgeInsets.all(0),
+                      dashPattern: const [10, 10],
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTap: (){
+                            controller.pickImage();
+                          },
+                          child: Container(
+                            height: 180,
+                            width: width,
+                            decoration: BoxDecoration(
+                                borderRadius: AppStyles.customBorder8,
+                                border: Border.all(color: kFieldBorderColor)),
+                            child: ClipRRect(
+                              borderRadius: AppStyles.customBorder8,
+                              child: Image.memory(
+                                controller.selectedImage.value!,
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                            Text(
-                              "Drag and drop image here, or click add image",
-                              style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w400,color: const Color(0xff858D9D)),
-                            ),
-                            CustomButton(text: "Add Image", height: 40, onTap: (){},width: 100,color: kBackGroundColor,borderColor: kBackGroundColor,textColor: kBlackColor,),
-                          ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -165,8 +198,9 @@ class BlogScreen extends GetView<BlogController> {
                       Get.back();
                     },width: 75,textColor: kBlackColor,color: kWhiteColor,borderColor: kFieldBorderColor,fontSize: 14.sp,),
                     CustomButton(text: "Add Blog", height: 40, onTap: (){
-
-                    },width: 90,color: kPrimaryColor,fontSize: 14.sp,),
+                      Get.back();
+                      controller.selectedImage.value = null;
+                    },width: 90,color: kPrimaryColor,fontSize: 13.sp,),
                   ],
                 )
               ],
@@ -222,6 +256,7 @@ class BlogScreen extends GetView<BlogController> {
                       borderRadius: AppStyles.customBorder8,border: Border.all(color: kGrey1)),
                   child: Obx(() {
                     return DropdownButton<String>(
+                      dropdownColor: kWhiteColor,
                       borderRadius: AppStyles.customBorder8,
                       isExpanded: true,
                       focusColor: kWhiteColor,

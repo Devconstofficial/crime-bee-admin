@@ -10,15 +10,21 @@ class AddCrimeController extends GetxController {
   TextEditingController severityLevelController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController dateIncidentController = TextEditingController();
+  TextEditingController dateIncidentEditController = TextEditingController();
   TextEditingController timeIncidentController = TextEditingController();
+  TextEditingController timeIncidentEditController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  var pickLocation = kLocation.obs;
   var selectedCrimeType = ''.obs;
   var selectedCrimeType1 = ''.obs;
   var selectedSeverityLevel = ''.obs;
   var selectedSeverityLevel1 = ''.obs;
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
+  Rx<DateTime?> selectedDateEdit = Rx<DateTime?>(null);
   Rx<String> selectedTime = Rx<String>("time");
+  Rx<String> selectedTime1 = Rx<String>("time");
   Rx<bool> isAm = true.obs;
+  Rx<bool> isAm1 = true.obs;
   RxList notifications = [].obs;
   RxList activities = [].obs;
   var selectedFilters = <String>{}.obs;
@@ -86,6 +92,55 @@ class AddCrimeController extends GetxController {
     );
   }
 
+  void openCalendarDialog1(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: kWhiteColor,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Obx(() => SizedBox(
+            height: 350,
+            width: 342,
+            child: TableCalendar(
+              firstDay: DateTime.utc(2000, 1, 1),
+              lastDay: DateTime.utc(2100, 12, 31),
+              focusedDay: selectedDateEdit.value ?? DateTime.now(),
+              selectedDayPredicate: (day) => isSameDay(selectedDateEdit.value, day),
+              onDaySelected: (newSelectedDay, newFocusedDay) {
+                selectedDateEdit.value = newSelectedDay;
+                dateIncidentEditController.text =
+                "${selectedDateEdit.value!.day}-${selectedDateEdit.value!.month}-${selectedDateEdit.value!.year}";
+                Get.back();
+              },
+              calendarStyle: CalendarStyle(
+                todayDecoration: BoxDecoration(
+                  color: kPrimaryColor.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(8),
+                  shape: BoxShape.rectangle,
+                ),
+                selectedDecoration: BoxDecoration(
+                  color: kPrimaryColor,
+                  borderRadius: BorderRadius.circular(8),
+                  shape: BoxShape.rectangle,
+                ),
+              ),
+              headerStyle: const HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
+                titleTextStyle: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          )),
+        ),
+      ),
+    );
+  }
+
 
   @override
   void onInit() {
@@ -117,6 +172,11 @@ class AddCrimeController extends GetxController {
   void setSelectedTime(String time) {
     selectedTime.value = time;
     timeIncidentController.text = selectedTime.value;
+  }
+
+  void setSelectedTime1(String time) {
+    selectedTime1.value = time;
+    timeIncidentEditController.text = selectedTime1.value;
   }
 
   var isFormValid = false.obs;

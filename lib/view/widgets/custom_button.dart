@@ -33,30 +33,33 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        height: height,
-        width: width,
-        decoration: BoxDecoration(
-          border: Border.all(color: borderColor ?? kPrimaryColor),
-          borderRadius: AppStyles.customBorder8,
-          color: color ?? kPrimaryColor
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if(isImage == true)
-              Image.asset(image!,height: 30,width: 30,),
-              if(isImage == true)
-              const SizedBox(width: 22),
-              Text(
-                text,
-                style: AppStyles.workSansTextStyle().copyWith(fontSize: fontSize ?? 16.sp,fontWeight: FontWeight.w600,color: textColor ?? kWhiteColor)
-              ),
-            ],
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: height,
+          width: width,
+          decoration: BoxDecoration(
+            border: Border.all(color: borderColor ?? kPrimaryColor),
+            borderRadius: AppStyles.customBorder8,
+            color: color ?? kPrimaryColor
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if(isImage == true)
+                Image.asset(image!,height: 30,width: 30,),
+                if(isImage == true)
+                const SizedBox(width: 22),
+                Text(
+                  text,
+                  style: AppStyles.workSansTextStyle().copyWith(fontSize: fontSize ?? 16.sp,fontWeight: FontWeight.w600,color: textColor ?? kWhiteColor)
+                ),
+              ],
+            ),
           ),
         ),
       ),

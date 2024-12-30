@@ -1,9 +1,10 @@
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
+import 'dart:typed_data';
+
+import 'package:crime_bee_admin/utils/app_strings.dart';
 import 'package:get/get.dart';
 import '../../../../utils/app_colors.dart';
-import '../../../../utils/app_images.dart';
-import '../../../models/comment_model.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class BlogController extends GetxController {
   var selectedBlogType = ''.obs;
@@ -11,6 +12,16 @@ class BlogController extends GetxController {
   RxList notifications = [].obs;
   RxList activities = [].obs;
   var selectedFilters = <String>{}.obs;
+
+  Rx<Uint8List?> selectedImage = Rx<Uint8List?>(null);
+
+  Future<void> pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      selectedImage.value = await image.readAsBytes();
+    }
+  }
 
   void toggleFilter(String filter) {
     if (selectedFilters.contains(filter)) {

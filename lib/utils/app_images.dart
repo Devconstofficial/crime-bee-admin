@@ -9,6 +9,7 @@ String kDashboardIcon = "$basePathIcons/dashboard.svg";
 String kDeleteIcon = "$basePathIcons/delete.svg";
 String kEditIcon = "$basePathIcons/edit.svg";
 String kEyeIcon = "$basePathIcons/eye.svg";
+String kEyeIconPng = "$basePathIcons/eyeIcon.png";
 String kFilterIcon = "$basePathIcons/filter.svg";
 String kGalleryIcon = "$basePathIcons/gallery.svg";
 String kLogoutIcon = "$basePathIcons/logout.svg";

@@ -65,6 +65,7 @@ class NotificationScreen extends GetView<NotificationController> {
                     borderRadius: AppStyles.customBorder8,
                     isExpanded: true,
                     focusColor: kWhiteColor,
+                    dropdownColor: kWhiteColor,
                     value: controller.selectedNotiType.value.isNotEmpty
                         ? controller.selectedNotiType.value
                         : null,
@@ -137,6 +138,7 @@ class NotificationScreen extends GetView<NotificationController> {
                     borderRadius: AppStyles.customBorder8,
                     isExpanded: true,
                     focusColor: kWhiteColor,
+                    dropdownColor: kWhiteColor,
                     value: controller.allUserType.value.isNotEmpty
                         ? controller.allUserType.value
                         : null,

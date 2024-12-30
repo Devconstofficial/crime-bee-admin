@@ -991,18 +991,17 @@ class CommentScreen extends GetView<CommentController> {
                           },
                         );
                       },
-                      child: SvgPicture.asset(
-                        kEyeIcon,
+                      child: Image.asset(
+                        kEyeIconPng,
                         height: 25,
                         width: 25,
-                        colorFilter: const ColorFilter.mode(kPrimaryColor, BlendMode.srcIn),
                       ),
                     ),
                     Container(
                       width: 1,
                       color: kLightGreyColor,
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: (){
                         showDialog(
                           context: context,

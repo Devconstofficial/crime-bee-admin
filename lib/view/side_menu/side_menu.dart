@@ -487,7 +487,7 @@ class _SideMenuState extends State<SideMenu> {
             ),
             // const Spacer(),
             Padding(
-              padding: const EdgeInsets.only(left: 15),
+              padding: const EdgeInsets.only(left: 15,bottom: 15),
               child: Obx(() {
                 return MouseRegion(
                   cursor: SystemMouseCursors.click,

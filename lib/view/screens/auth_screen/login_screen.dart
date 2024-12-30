@@ -75,29 +75,32 @@ class LoginScreen extends GetView<AuthController> {
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w400,
                                 color: kLoginDetailColor),),
-                          MyCustomTextField(
+                          const MyCustomTextField(
                             hintText: "Enter your password",
                             fillColor: kWhiteColor,
                             borderColor: kFieldBorderColor,
                             contentPadding: EdgeInsets.all(20),
                             suffixIcon: Icons.remove_red_eye_outlined,
                           ),
-                          SizedBox(height: 32,),
-                          GestureDetector(
-                            onTap: (){
-                              Get.toNamed(kDashboardScreenRoute);
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 64,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(40),
-                                  color: kPrimaryColor
-                              ),
-                              child: Center(
-                                child: Text('Login',
-                                  style: AppStyles.workSansTextStyle().copyWith(
-                                      fontSize: 20.sp, fontWeight: FontWeight.w500,color: kWhiteColor),),
+                          const SizedBox(height: 32,),
+                          MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap: (){
+                                Get.toNamed(kDashboardScreenRoute);
+                              },
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: 64,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(40),
+                                    color: kPrimaryColor
+                                ),
+                                child: Center(
+                                  child: Text('Login',
+                                    style: AppStyles.workSansTextStyle().copyWith(
+                                        fontSize: 20.sp, fontWeight: FontWeight.w500,color: kWhiteColor),),
+                                ),
                               ),
                             ),
                           )

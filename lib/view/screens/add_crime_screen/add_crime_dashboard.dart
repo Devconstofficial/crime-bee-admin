@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:crime_bee_admin/utils/app_strings.dart';
 import 'package:crime_bee_admin/view/widgets/custom_button.dart';
 import 'package:crime_bee_admin/view/widgets/custom_textField.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_images.dart';
 import '../../../utils/app_styles.dart';
@@ -15,6 +18,7 @@ import '../../widgets/delete_dialog.dart';
 import '../../widgets/filter_btn.dart';
 import '../../widgets/notifiction_panel.dart';
 import 'controller/add_crime_controller.dart';
+import 'controller/location_controller.dart';
 
 class AddCrimeDashboard extends GetView<AddCrimeController> {
   AddCrimeDashboard({super.key});
@@ -329,7 +333,15 @@ class AddCrimeDashboard extends GetView<AddCrimeController> {
                   fillColor: kWhiteColor,
                   borderColor: kFieldBorderColor,
                   suffixIcon: Icons.location_on_outlined,
-                  controller: controller.severityLevelController,
+                  controller: controller.locationController,
+                  suffixOnPress: (){
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return locationDialogue(context);
+                      },
+                    );
+                  },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
                 Row(
@@ -347,7 +359,10 @@ class AddCrimeDashboard extends GetView<AddCrimeController> {
                           fillColor: kWhiteColor,
                           borderColor: kFieldBorderColor,
                           suffixIcon: Icons.date_range_rounded,
-                          controller: controller.severityLevelController,
+                          controller: controller.dateIncidentEditController,
+                          suffixOnPress: (){
+                            controller.openCalendarDialog1(context);
+                          },
                         ),
                       ],
                     )),
@@ -364,8 +379,16 @@ class AddCrimeDashboard extends GetView<AddCrimeController> {
                           hintText: "Time",
                           fillColor: kWhiteColor,
                           borderColor: kFieldBorderColor,
-                          controller: controller.severityLevelController,
+                          controller: controller.timeIncidentEditController,
                           suffixIcon: Icons.access_time_outlined,
+                          suffixOnPress: (){
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return timeDialog(context);
+                              },
+                            );
+                          },
                         ),
                       ],
                     )),
@@ -380,7 +403,7 @@ class AddCrimeDashboard extends GetView<AddCrimeController> {
                   hintText: "Description",
                   fillColor: kWhiteColor,
                   borderColor: kFieldBorderColor,
-                  controller: controller.severityLevelController,
+                  controller: controller.descriptionController,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.1,),
                 Row(
@@ -401,6 +424,223 @@ class AddCrimeDashboard extends GetView<AddCrimeController> {
       ),
     );
   }
+
+  Widget timeDialog(BuildContext context){
+    return Dialog(
+      backgroundColor: kWhiteColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppStyles.customBorder8,
+      ),
+      child: SizedBox(
+        width: 342,
+        child: Padding(
+          padding: const EdgeInsets.all(25),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Time',
+                style: AppStyles.poppinsTextStyle().copyWith(fontSize: 16.sp),
+              ),
+              InkWell(
+                onTap: () async {
+                  final TimeOfDay? pickedTime = await timePickerDialog(context);
+
+                  if (pickedTime != null) {
+
+                    bool isAm = pickedTime.period == DayPeriod.am;
+
+                    String formattedTime = '${pickedTime.hourOfPeriod == 0 ? 12 : pickedTime.hourOfPeriod}:${pickedTime.minute.toString().padLeft(2, '0')}';
+
+                    controller.setSelectedTime1(formattedTime);
+                    controller.isAm1.value = isAm;
+                  }
+                },
+                child: Container(
+                  width: 60,
+                  height: 35,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: kLightGreyColor
+                  ),
+                  child: Center(
+                    child: Obx(() {
+                      return Text(
+                        controller.selectedTime1.value,
+                        style: AppStyles.poppinsTextStyle().copyWith(fontSize: 16.sp),
+                      );
+                    }),
+                  ),
+                ),
+              ),
+              Obx(() {
+                return SizedBox(
+                  child: Row(
+                    children: [
+                      Radio(
+                        value: true,
+                        groupValue: controller.isAm1.value,
+                        focusColor: controller.isAm1.value ? kPrimaryColor : kLightGreyColor,
+                        fillColor: MaterialStateProperty.resolveWith(
+                                (states) => controller.isAm1.value ? kPrimaryColor : kLightGreyColor),
+                        onChanged: (val) {
+                          controller.isAm1.value = val!;
+                          log('AM selected');
+                        },
+                      ),
+                      Text(
+                        'AM',
+                        style: TextStyle(fontSize: 16, color: controller.isAm1.value ? kPrimaryColor : kBlackColor),
+                      ),
+                    ],
+                  ),
+                );
+              },),
+              Obx(() {
+                return SizedBox(
+                  child: Row(
+                    children: [
+                      Radio(
+                        value: false,
+                        groupValue: controller.isAm1.value,
+                        focusColor: controller.isAm1.value ? kPrimaryColor : kLightGreyColor,
+                        fillColor: MaterialStateProperty.resolveWith(
+                                (states) => controller.isAm1.value ? kPrimaryColor : kLightGreyColor),
+                        onChanged: (val) {
+                          controller.isAm1.value = val!;
+                          log('PM selected');
+                        },
+                      ),
+                      Text(
+                        'PM',
+                        style: TextStyle(fontSize: 16, color: controller.isAm1.value ? kPrimaryColor : kBlackColor),
+                      ),
+                    ],
+                  ),
+                );
+              },)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<TimeOfDay?> timePickerDialog(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+    );
+    return pickedTime;
+  }
+
+  Widget locationDialogue(BuildContext context){
+    LocationPickerController locController = Get.put(LocationPickerController());
+
+    return Dialog(
+      backgroundColor: kWhiteColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppStyles.customBorder8,
+      ),
+      child: SizedBox(
+        width: 400,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: AppStyles().paddingAll24,
+            child: Column(
+              children: [
+                TextField(
+                  controller: locController.searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search location',
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () {
+                        locController.searchLocation(locController.searchController.text);
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10,),
+                SizedBox(
+                  height: 500,
+                  child: Stack(
+                    children: [
+                      Obx(() {
+                        if (!locController.isLocationLoaded.value) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        return ClipRRect(
+                          borderRadius: AppStyles.customBorderAll,
+                          child: GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                              target: locController.currentLocation,
+                              zoom: 14,
+                            ),
+                            onMapCreated: (GoogleMapController mapController) {
+                              locController.mapController.complete(mapController);
+                            },
+                            onCameraMove: locController.onMapCameraMove,
+                            onCameraIdle: locController.onMapCameraIdle,
+                            markers: Set<Marker>.of(locController.markers),
+                            onTap: locController.onMapTap,
+                          ),
+                        );
+                      }),
+                      Obx(() {
+                        return Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Container(
+                              height: 150,
+                              margin: const EdgeInsets.only(bottom: 20),
+                              padding: const EdgeInsets.all(16.0),
+                              decoration: BoxDecoration(
+                                  color: kPrimaryColor,
+                                  borderRadius: BorderRadius.circular(16)
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  locController.isLoadingAddress.value
+                                      ? const CircularProgressIndicator()
+                                      : Text(locController.selectedAddress.value.isNotEmpty
+                                      ? locController.selectedAddress.value
+                                      : "Select a location", style: AppStyles.workSansTextStyle().copyWith(color: kWhiteColor,),),
+                                  const SizedBox(height: 10),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      controller.pickLocation;
+                                      Get.back();
+                                    },
+                                    child: const Text('Pick Location'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {

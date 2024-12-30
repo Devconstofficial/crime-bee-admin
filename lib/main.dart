@@ -18,6 +18,9 @@ class MyApp extends StatelessWidget {
     var baseTheme = ThemeData(brightness: brightness);
 
     return baseTheme.copyWith(
+      timePickerTheme: const TimePickerThemeData(
+        backgroundColor: kWhiteColor,
+      ),
       primaryColor: kWhiteColor,
       scaffoldBackgroundColor: kWhiteColor,
       appBarTheme: const AppBarTheme(

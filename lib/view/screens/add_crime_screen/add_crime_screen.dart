@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_images.dart';
 import '../../../utils/app_styles.dart';
@@ -13,6 +14,7 @@ import '../../../utils/common_code.dart';
 import '../../side_menu/side_menu.dart';
 import '../../widgets/notifiction_panel.dart';
 import 'controller/add_crime_controller.dart';
+import 'controller/location_controller.dart';
 
 class AddCrimeScreen extends GetView<AddCrimeController> {
   const AddCrimeScreen({super.key});
@@ -169,6 +171,108 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
   //     ),
   //   );
   // }
+
+  Widget locationDialogue(BuildContext context){
+    double width = MediaQuery.of(context).size.width;
+    LocationPickerController locController = Get.put(LocationPickerController());
+
+    return Dialog(
+      backgroundColor: kWhiteColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppStyles.customBorder8,
+      ),
+      child: SizedBox(
+        width: 400,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: AppStyles().paddingAll24,
+            child: Column(
+              children: [
+                TextField(
+                  controller: locController.searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search location',
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () {
+                        locController.searchLocation(locController.searchController.text);
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10,),
+                SizedBox(
+                  height: 500,
+                  child: Stack(
+                    children: [
+                      Obx(() {
+                        if (!locController.isLocationLoaded.value) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        return ClipRRect(
+                          borderRadius: AppStyles.customBorderAll,
+                          child: GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                              target: locController.currentLocation,
+                              zoom: 14,
+                            ),
+                            onMapCreated: (GoogleMapController mapController) {
+                              locController.mapController.complete(mapController);
+                            },
+                            onCameraMove: locController.onMapCameraMove,
+                            onCameraIdle: locController.onMapCameraIdle,
+                            markers: Set<Marker>.of(locController.markers),
+                            onTap: locController.onMapTap,
+                          ),
+                        );
+                      }),
+                      Obx(() {
+                        return Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Container(
+                              height: 150,
+                              margin: const EdgeInsets.only(bottom: 20),
+                              padding: const EdgeInsets.all(16.0),
+                              decoration: BoxDecoration(
+                                  color: kPrimaryColor,
+                                  borderRadius: BorderRadius.circular(16)
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  locController.isLoadingAddress.value
+                                      ? const CircularProgressIndicator()
+                                      : Text(locController.selectedAddress.value.isNotEmpty
+                                      ? locController.selectedAddress.value
+                                      : "Select a location", style: AppStyles.workSansTextStyle().copyWith(color: kWhiteColor,),),
+                                  const SizedBox(height: 10),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      controller.pickLocation;
+                                      Get.back();
+                                    },
+                                    child: const Text('Pick Location'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget timeDialog(BuildContext context){
     return Dialog(
       backgroundColor: kWhiteColor,
@@ -510,7 +614,7 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(kLocation,style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w500),),
+                                        Text(controller.pickLocation.value.toString(),style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w500),),
                                         Text("*",style: AppStyles.workSansTextStyle().copyWith(color: kPrimaryColor,fontWeight: FontWeight.w500,fontSize: 14.sp,),),
                                       ],
                                     ),
@@ -523,6 +627,14 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
                                         suffixIcon: Icons.location_on_outlined,
                                         suffixIconColor: ksuffix2Color,
                                         controller: controller.locationController,
+                                        suffixOnPress: (){
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return locationDialogue(context);
+                                            },
+                                          );
+                                          },
                                       ),
                                     ),
                                     const SizedBox(height: 20,),
