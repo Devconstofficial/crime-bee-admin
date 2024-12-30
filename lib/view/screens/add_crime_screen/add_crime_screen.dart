@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:crime_bee_admin/utils/app_strings.dart';
 import 'package:crime_bee_admin/view/widgets/custom_button.dart';
 import 'package:crime_bee_admin/view/widgets/custom_textField.dart';
@@ -7,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:table_calendar/table_calendar.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_images.dart';
 import '../../../utils/app_styles.dart';
@@ -171,7 +169,6 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
   //     ),
   //   );
   // }
-
   Widget timeDialog(BuildContext context){
     return Dialog(
       backgroundColor: kWhiteColor,
@@ -308,7 +305,7 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          height: 61,
+                          height: 68,
                           decoration: const BoxDecoration(
                               border: Border(bottom: BorderSide(color: kBackGroundColor,width: 2))),
                           child: Padding(
@@ -318,8 +315,8 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Container(
-                                  height: 28,
-                                  width: 252,
+                                  height: 41,
+                                  width: width / 4.5,
                                   decoration: BoxDecoration(
                                       color: kWhiteColor,
                                       borderRadius: BorderRadius.circular(8),
@@ -331,43 +328,54 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
                                       mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                       children: [
-                                        const SizedBox(
-                                          width: 220,
-                                          child: MyCustomTextField(
-                                            hintText: 'Search',
-                                            fillColor: kWhiteColor,
-                                            contentPadding: EdgeInsets.all(0),
-                                            prefixIcon: Icon(
-                                              Icons.search_sharp,
-                                              size: 13,
-                                              color: kLightBlackColor,
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 3),
+                                          child: SizedBox(
+                                            width: width / 5.5,
+                                            child: TextField(
+                                              style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w400),
+                                              decoration: InputDecoration(
+                                                  hintText: 'Search',
+                                                  fillColor: kWhiteColor,
+                                                  hintStyle: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w400,color: ksuffixColor.withOpacity(0.2)),
+                                                  // contentPadding: const EdgeInsets.only(top: 9),
+                                                  prefixIcon: Icon(
+                                                    Icons.search_sharp,
+                                                    size: 16,
+                                                    color: ksuffixColor.withOpacity(0.2),
+                                                  ),
+                                                  focusColor: kWhiteColor,
+                                                  hoverColor: kWhiteColor,
+                                                  focusedBorder: const UnderlineInputBorder(borderSide: BorderSide.none),
+                                                  enabledBorder: const UnderlineInputBorder(borderSide: BorderSide.none),
+                                                  border: const UnderlineInputBorder(borderSide: BorderSide.none)
+                                              ),
                                             ),
                                           ),
                                         ),
                                         Text(
                                           '⌘/',
-                                          style: AppStyles.workSansTextStyle()
+                                          style: AppStyles.interTextStyle()
                                               .copyWith(
-                                              fontSize: 14.sp,
+                                              fontSize: 14,
                                               fontWeight: FontWeight.w400,
-                                              color: kLightBlackColor),
+                                              color: ksuffixColor.withOpacity(0.2)),
                                         ),
                                       ],
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: 20),
-                                GestureDetector(
-                                  onTap: (){
-                                    controller.toggleNotificationVisibility();
-                                  },
-                                  child: SvgPicture.asset(
-                                    kNotificationIcon,
-                                    height: 20,
-                                    width: 20,
-                                    colorFilter: const ColorFilter.mode(
-                                      kLightBlackColor,
-                                      BlendMode.srcIn,
+                                MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  child: GestureDetector(
+                                    onTap: (){
+                                      controller.toggleNotificationVisibility();
+                                    },
+                                    child:Image.asset(
+                                      kNotification1Icon,
+                                      height: 20,
+                                      width: 20,
                                     ),
                                   ),
                                 ),
@@ -380,7 +388,6 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // const SizedBox(height: 11,),
                               Text(kAddCrime,style: AppStyles.workSansTextStyle().copyWith(fontSize: 32.sp,fontWeight: FontWeight.w600),),
                               const SizedBox(height: 18,),
                               Padding(
@@ -392,11 +399,11 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(kTypeofCrime,style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w500),),
-                                        const Text("*",style: TextStyle(color: kPrimaryColor),),
+                                        Text("*",style: AppStyles.workSansTextStyle().copyWith(color: kPrimaryColor,fontWeight: FontWeight.w500,fontSize: 14.sp,),),
                                       ],
                                     ),
                                     Container(
-                                      height: 48,
+                                      height: 41,
                                       width: width,
                                       decoration: BoxDecoration(
                                           color: kWhiteColor,
@@ -406,6 +413,7 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
                                           borderRadius: AppStyles.customBorder8,
                                           isExpanded: true,
                                           focusColor: kWhiteColor,
+                                          dropdownColor: kWhiteColor,
                                           value: controller.selectedCrimeType1.value.isNotEmpty
                                               ? controller.selectedCrimeType1.value
                                               : null,
@@ -447,11 +455,11 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(kSeverityLevel,style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w500),),
-                                        const Text("*",style: TextStyle(color: kPrimaryColor),),
+                                        Text("*",style: AppStyles.workSansTextStyle().copyWith(color: kPrimaryColor,fontWeight: FontWeight.w500,fontSize: 14.sp,),),
                                       ],
                                     ),
                                     Container(
-                                      height: 48,
+                                      height: 41,
                                       width: width,
                                       decoration: BoxDecoration(
                                           color: kWhiteColor,
@@ -461,6 +469,7 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
                                           borderRadius: AppStyles.customBorder8,
                                           isExpanded: true,
                                           focusColor: kWhiteColor,
+                                          dropdownColor: kWhiteColor,
                                           value: controller.selectedSeverityLevel1.value.isNotEmpty
                                               ? controller.selectedSeverityLevel1.value
                                               : null,
@@ -502,53 +511,70 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(kLocation,style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w500),),
-                                        const Text("*",style: TextStyle(color: kPrimaryColor),),
+                                        Text("*",style: AppStyles.workSansTextStyle().copyWith(color: kPrimaryColor,fontWeight: FontWeight.w500,fontSize: 14.sp,),),
                                       ],
                                     ),
-                                    MyCustomTextField(
-                                      hintText: kLocation,
-                                      fillColor: kWhiteColor,
-                                      borderColor: kFieldBorderColor,
-                                      controller: controller.locationController,
+                                    SizedBox(
+                                      height: 41,
+                                      child: MyCustomTextField(
+                                        hintText: kLocation,
+                                        fillColor: kWhiteColor,
+                                        borderColor: kFieldBorderColor,
+                                        suffixIcon: Icons.location_on_outlined,
+                                        suffixIconColor: ksuffix2Color,
+                                        controller: controller.locationController,
+                                      ),
                                     ),
                                     const SizedBox(height: 20,),
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(kDateIncident,style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w500),),
-                                        const Text("*",style: TextStyle(color: kPrimaryColor),),
+                                        Text("*",style: AppStyles.workSansTextStyle().copyWith(color: kPrimaryColor,fontWeight: FontWeight.w500,fontSize: 14.sp,),),
                                       ],
                                     ),
-                                    MyCustomTextField(
-                                      hintText: kDateIncident,
-                                      fillColor: kWhiteColor,
-                                      borderColor: kFieldBorderColor,
-                                      controller: controller.dateIncidentController,
-                                      onTap: (){
-                                        controller.openCalendarDialog(context);
-                                      },
+                                    SizedBox(
+                                      height: 41,
+                                      child: MyCustomTextField(
+                                        hintText: kDateIncident,
+                                        fillColor: kWhiteColor,
+                                        hintColor: kHintColor,
+                                        borderColor: kFieldBorderColor,
+                                        controller: controller.dateIncidentController,
+                                        suffixIcon: Icons.date_range_rounded,
+                                        suffixIconColor: ksuffix2Color,
+                                        onTap: (){
+                                          controller.openCalendarDialog(context);
+                                        },
+                                      ),
                                     ),
                                     const SizedBox(height: 20,),
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(kTimeIncident,style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w500),),
-                                        const Text("*",style: TextStyle(color: kPrimaryColor),),
+                                        Text("*",style: AppStyles.workSansTextStyle().copyWith(color: kPrimaryColor,fontWeight: FontWeight.w500,fontSize: 14.sp,),),
                                       ],
                                     ),
-                                    MyCustomTextField(
-                                      hintText: kTimeIncident,
-                                      fillColor: kWhiteColor,
-                                      borderColor: kFieldBorderColor,
-                                      controller: controller.timeIncidentController,
-                                      onTap: (){
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return timeDialog(context);
-                                          },
-                                        );
-                                      },
+                                    SizedBox(
+                                      height: 41,
+                                      child: MyCustomTextField(
+                                        hintText: kTimeIncident,
+                                        fillColor: kWhiteColor,
+                                        hintColor: kHintColor,
+                                        borderColor: kFieldBorderColor,
+                                        controller: controller.timeIncidentController,
+                                        suffixIcon: Icons.access_time_outlined,
+                                        suffixIconColor: ksuffix2Color,
+                                        onTap: (){
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return timeDialog(context);
+                                            },
+                                          );
+                                        },
+                                      ),
                                     ),
                                     const SizedBox(height: 20,),
                                     Row(
@@ -557,13 +583,17 @@ class AddCrimeScreen extends GetView<AddCrimeController> {
                                         Text("Description (optional)",style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w500),),
                                       ],
                                     ),
-                                    MyCustomTextField(
-                                      hintText: "Description",
-                                      fillColor: kWhiteColor,
-                                      borderColor: kFieldBorderColor,
-                                      controller: controller.descriptionController,
+                                    SizedBox(
+                                      height: 41,
+                                      child: MyCustomTextField(
+                                        hintText: "Description",
+                                        fillColor: kWhiteColor,
+                                        hintColor: kHintColor,
+                                        borderColor: kFieldBorderColor,
+                                        controller: controller.descriptionController,
+                                      ),
                                     ),
-                                    const SizedBox(height: 280,),
+                                    const SizedBox(height: 173,),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [

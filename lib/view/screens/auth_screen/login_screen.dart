@@ -49,12 +49,14 @@ class LoginScreen extends GetView<AuthController> {
                                   fontSize: 40.sp, fontWeight: FontWeight.w600),),
                           ),
                           SizedBox(height: 4,),
-                          Text(
-                            'Log In to your Crime Bee account to have admin access.',
-                            style: AppStyles.workSansTextStyle().copyWith(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w400,
-                                color: kLoginDetailColor),),
+                          Center(
+                            child: Text(
+                              'Log In to your Crime Bee account to have admin access.',
+                              style: AppStyles.workSansTextStyle().copyWith(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w400,
+                                  color: kLoginDetailColor),),
+                          ),
                           SizedBox(height: 44,),
                           Text('Email Address',
                             style: AppStyles.workSansTextStyle().copyWith(

@@ -6,6 +6,7 @@ class MyCustomTextField extends StatefulWidget {
   final String? hintText;
   final String? labelText;
   final IconData? suffixIcon;
+  final Color? suffixIconColor;
   final VoidCallback? suffixOnPress;
   final VoidCallback? onTap;
   // final double fontSize;
@@ -52,6 +53,7 @@ class MyCustomTextField extends StatefulWidget {
     this.contentPadding,
     this.borderColor,
     this.focusBorderColor,
+    this.suffixIconColor,
   });
 
   @override
@@ -76,7 +78,7 @@ class _MyCustomTextFieldState extends State<MyCustomTextField> {
         suffixIcon: widget.suffixIcon != null
             ? IconButton(
           onPressed: widget.suffixOnPress,
-          icon: Icon(widget.suffixIcon,color: kLocationIconColor,),
+          icon: Icon(widget.suffixIcon,color: widget.suffixIconColor ?? kLocationIconColor,size: 18,),
         )
             : null,
         fillColor: widget.fillColor,
@@ -84,11 +86,13 @@ class _MyCustomTextFieldState extends State<MyCustomTextField> {
         hintText: widget.hintText,
         hintStyle: AppStyles.workSansTextStyle().copyWith(color: widget.textColor,fontSize: 12),
         focusedBorder: OutlineInputBorder(
+          borderRadius: AppStyles.customBorderAll,
           borderSide: BorderSide(
             color: widget.focusBorderColor ?? kSecondaryColor,
           ),
         ),
         enabledBorder: OutlineInputBorder(
+          borderRadius: AppStyles.customBorderAll,
           borderSide: BorderSide(
             color: widget.borderColor ?? kBackGroundColor,
           ),

@@ -42,6 +42,7 @@ class AddCrimeController extends GetxController {
       context: context,
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: kWhiteColor,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Obx(() => SizedBox(

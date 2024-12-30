@@ -27,24 +27,24 @@ class AppStyles {
     fontSize: 16.sp, fontWeight: FontWeight.w500, color: kBlackColor,);
 
   static BorderRadius get customBorderAll => BorderRadius.all(
-    Radius.circular(8.h),
+    Radius.circular(8),
   );
 
   static BorderRadius get searchFieldBorder20=> BorderRadius.all(
-    Radius.circular(20.h),
+    Radius.circular(20),
   );
 
   static BorderRadius get customBorder16=> BorderRadius.all(
-    Radius.circular(16.h),
+    Radius.circular(16),
   );
 
 
   static BorderRadius get customBorderAll100 => BorderRadius.all(
-    Radius.circular(100.h),
+    Radius.circular(100),
   );
 
   static BorderRadius get customBorder8 => BorderRadius.all(
-    Radius.circular(8.h),
+    Radius.circular(8),
   );
 
   EdgeInsets get horizontal => const EdgeInsets.symmetric(horizontal: 20.0);

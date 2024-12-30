@@ -65,12 +65,14 @@ class NotificationAndActivitySection extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 7),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 notification['title']!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: AppStyles.workSansTextStyle().copyWith(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w400,

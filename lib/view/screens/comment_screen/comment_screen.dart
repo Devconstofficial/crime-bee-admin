@@ -61,10 +61,9 @@ class CommentScreen extends GetView<CommentController> {
                       child: ClipRRect(
                         borderRadius: AppStyles.customBorderAll100,
                         child: Center(
-                          child: SvgPicture.asset(
-                            kUser1,
-                            height: 12,
-                            width: 12,
+                          child: Image.asset(
+                            kUserLogo,
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
@@ -78,30 +77,36 @@ class CommentScreen extends GetView<CommentController> {
                 SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
                 Text(
                   "Comment",
-                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
+                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500,color: kBlack2Color),
                 ),
-                MyCustomTextField(
-                  hintText: "Comment",
-                  fillColor: kWhiteColor,
-                  borderColor: kFieldBorderColor,
-                  controller: controller.commentController,
+                SizedBox(
+                  height: 40,
+                  child: MyCustomTextField(
+                    hintText: "Comment",
+                    fillColor: kWhiteColor,
+                    borderColor: kFieldBorderColor,
+                    controller: controller.commentController,
+                  ),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
                 Text(
                   "Associated Post/Thread",
-                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
+                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500,color: kBlack2Color),
                 ),
-                MyCustomTextField(
-                  hintText: "Associated Post/Thread",
-                  fillColor: kWhiteColor,
-                  borderColor: kFieldBorderColor,
-                  controller: controller.threadController,
+                SizedBox(
+                  height: 40,
+                  child: MyCustomTextField(
+                    hintText: "Associated Post/Thread",
+                    fillColor: kWhiteColor,
+                    borderColor: kFieldBorderColor,
+                    controller: controller.threadController,
+                  ),
                 ),
                 const SizedBox(height: 12,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    CustomButton(text: "View Full Post", height: 25,width: 123,fontSize: 14.sp, onTap: (){
+                    CustomButton(text: "View Full Post", height: 25,width: 123,fontSize: 13.sp, onTap: (){
                       Get.back();
                       showDialog(
                         context: context,
@@ -114,52 +119,64 @@ class CommentScreen extends GetView<CommentController> {
                 ),
                 Text(
                   "User Details",
-                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
+                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500,color: kBlack2Color),
                 ),
                 const SizedBox(height: 9,),
                 Text(
                   "UserName",
-                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
+                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500,color: kBlack2Color),
                 ),
-                MyCustomTextField(
-                  hintText: "username",
-                  fillColor: kWhiteColor,
-                  borderColor: kFieldBorderColor,
-                  controller: controller.usernameController,
+                SizedBox(
+                  height: 40,
+                  child: MyCustomTextField(
+                    hintText: "username",
+                    fillColor: kWhiteColor,
+                    borderColor: kFieldBorderColor,
+                    controller: controller.usernameController,
+                  ),
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
+                const SizedBox(height: 20,),
                 Text(
                   "Joined",
-                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
+                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500,color: kBlack2Color),
                 ),
-                MyCustomTextField(
-                  hintText: "joined",
-                  fillColor: kWhiteColor,
-                  borderColor: kFieldBorderColor,
-                  controller: controller.joinedController,
+                SizedBox(
+                  height: 40,
+                  child: MyCustomTextField(
+                    hintText: "joined",
+                    fillColor: kWhiteColor,
+                    borderColor: kFieldBorderColor,
+                    controller: controller.joinedController,
 
+                  ),
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
+                const SizedBox(height: 20,),
                 Text(
                   "Contributions",
-                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
+                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500,color: kBlack2Color),
                 ),
-                MyCustomTextField(
-                  hintText: "contributions",
-                  fillColor: kWhiteColor,
-                  borderColor: kFieldBorderColor,
-                  controller: controller.contributionsController,
+                SizedBox(
+                  height: 40,
+                  child: MyCustomTextField(
+                    hintText: "contributions",
+                    fillColor: kWhiteColor,
+                    borderColor: kFieldBorderColor,
+                    controller: controller.contributionsController,
+                  ),
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
+                const SizedBox(height: 20,),
                 Text(
                   "Flagged Comments",
-                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500),
+                  style: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w500,color: kBlack2Color),
                 ),
-                MyCustomTextField(
-                  hintText: "flagged",
-                  fillColor: kWhiteColor,
-                  borderColor: kFieldBorderColor,
-                  controller: controller.flaggedCommentController,
+                SizedBox(
+                  height: 40,
+                  child: MyCustomTextField(
+                    hintText: "flagged",
+                    fillColor: kWhiteColor,
+                    borderColor: kFieldBorderColor,
+                    controller: controller.flaggedCommentController,
+                  ),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
                 Row(
@@ -352,7 +369,7 @@ class CommentScreen extends GetView<CommentController> {
                         Text('27',style: AppStyles.rubikTextStyle())
                       ],
                     ),
-                    SizedBox(width: 15,),
+                    const SizedBox(width: 15,),
                     Row(
                       children: [
                         SvgPicture.asset(
@@ -587,8 +604,8 @@ class CommentScreen extends GetView<CommentController> {
                               Text("Flag Comments",style: AppStyles.workSansTextStyle().copyWith(fontSize: 32.sp,fontWeight: FontWeight.w600),),
                               const Spacer(),
                               Container(
-                                height: 28,
-                                width: 252,
+                                height: 41,
+                                width: width / 4.5,
                                 decoration: BoxDecoration(
                                     color: kWhiteColor,
                                     borderRadius: BorderRadius.circular(8),
@@ -600,26 +617,38 @@ class CommentScreen extends GetView<CommentController> {
                                     mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const SizedBox(
-                                        width: 220,
-                                        child: MyCustomTextField(
-                                          hintText: 'Search',
-                                          fillColor: kWhiteColor,
-                                          contentPadding: EdgeInsets.all(0),
-                                          prefixIcon: Icon(
-                                            Icons.search_sharp,
-                                            size: 13,
-                                            color: kLightBlackColor,
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 3),
+                                        child: SizedBox(
+                                          width: width / 5.5,
+                                          child: TextField(
+                                            style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w400),
+                                            decoration: InputDecoration(
+                                                hintText: 'Search',
+                                                fillColor: kWhiteColor,
+                                                hintStyle: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w400,color: ksuffixColor.withOpacity(0.2)),
+                                                // contentPadding: const EdgeInsets.only(top: 9),
+                                                prefixIcon: Icon(
+                                                  Icons.search_sharp,
+                                                  size: 16,
+                                                  color: ksuffixColor.withOpacity(0.2),
+                                                ),
+                                                focusColor: kWhiteColor,
+                                                hoverColor: kWhiteColor,
+                                                focusedBorder: const UnderlineInputBorder(borderSide: BorderSide.none),
+                                                enabledBorder: const UnderlineInputBorder(borderSide: BorderSide.none),
+                                                border: const UnderlineInputBorder(borderSide: BorderSide.none)
+                                            ),
                                           ),
                                         ),
                                       ),
                                       Text(
                                         '⌘/',
-                                        style: AppStyles.workSansTextStyle()
+                                        style: AppStyles.interTextStyle()
                                             .copyWith(
-                                            fontSize: 14.sp,
+                                            fontSize: 14,
                                             fontWeight: FontWeight.w400,
-                                            color: kLightBlackColor),
+                                            color: ksuffixColor.withOpacity(0.2)),
                                       ),
                                     ],
                                   ),
@@ -632,14 +661,10 @@ class CommentScreen extends GetView<CommentController> {
                                   onTap: (){
                                     controller.toggleNotificationVisibility();
                                   },
-                                  child: SvgPicture.asset(
-                                    kNotificationIcon,
+                                  child:Image.asset(
+                                    kNotification1Icon,
                                     height: 20,
                                     width: 20,
-                                    colorFilter: const ColorFilter.mode(
-                                      kLightBlackColor,
-                                      BlendMode.srcIn,
-                                    ),
                                   ),
                                 ),
                               ),
@@ -970,6 +995,7 @@ class CommentScreen extends GetView<CommentController> {
                         kEyeIcon,
                         height: 25,
                         width: 25,
+                        colorFilter: const ColorFilter.mode(kPrimaryColor, BlendMode.srcIn),
                       ),
                     ),
                     Container(

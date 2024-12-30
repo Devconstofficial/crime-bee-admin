@@ -27,7 +27,7 @@ class _SideMenuState extends State<SideMenu> {
     return Drawer(
       backgroundColor: kWhiteColor,
       shape: const Border(right: BorderSide(color: kBackGroundColor)),
-      width: 200,
+      width: 220,
       child: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Column(
@@ -93,6 +93,7 @@ class _SideMenuState extends State<SideMenu> {
                                                   color: menuController.selectedIndex.value == 0
                                                       ? kWhiteColor
                                                       : kBlackColor,
+                                                  fontSize: 16
                                                 ),
                                               ),
                                           ],
@@ -111,7 +112,7 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 20,),
                       Obx(() {
                         return MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -153,6 +154,7 @@ class _SideMenuState extends State<SideMenu> {
                                                   color: menuController.selectedIndex.value == 1
                                                       ? kWhiteColor
                                                       : kBlackColor,
+                                                    fontSize: 16
                                                 ),
                                               ),
                                             ],
@@ -171,7 +173,7 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 20,),
                       Obx(() {
                         return MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -213,6 +215,8 @@ class _SideMenuState extends State<SideMenu> {
                                                   color: menuController.selectedIndex.value == 2
                                                       ? kWhiteColor
                                                       : kBlackColor,
+                                                    fontSize: 16
+
                                                 ),
                                               ),
                                             ],
@@ -231,7 +235,7 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 20,),
                       Obx(() {
                         return MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -273,6 +277,8 @@ class _SideMenuState extends State<SideMenu> {
                                                   color: menuController.selectedIndex.value == 3
                                                       ? kWhiteColor
                                                       : kBlackColor,
+                                                    fontSize: 16
+
                                                 ),
                                               ),
                                             ],
@@ -291,7 +297,7 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 20,),
                       Obx(() {
                         return MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -333,6 +339,8 @@ class _SideMenuState extends State<SideMenu> {
                                                   color: menuController.selectedIndex.value == 4
                                                       ? kWhiteColor
                                                       : kBlackColor,
+                                                    fontSize: 16
+
                                                 ),
                                               ),
                                             ],
@@ -351,7 +359,7 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 20,),
                       Obx(() {
                         return MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -393,6 +401,7 @@ class _SideMenuState extends State<SideMenu> {
                                                   color: menuController.selectedIndex.value == 5
                                                       ? kWhiteColor
                                                       : kBlackColor,
+                                                    fontSize: 16
                                                 ),
                                               ),
                                             ],
@@ -411,7 +420,7 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 20,),
                       Obx(() {
                         return MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -437,14 +446,12 @@ class _SideMenuState extends State<SideMenu> {
                                           child: Row(
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
-                                              SvgPicture.asset(
+                                              Image.asset(
                                                 kNotificationIcon,
                                                 height: 26,
                                                 width: 26,
-                                                colorFilter: ColorFilter.mode(
-                                                  menuController.selectedIndex.value == 6 ? kWhiteColor : kBlackColor,
-                                                  BlendMode.srcIn,
-                                                ),
+                                                color: menuController.selectedIndex.value == 6 ?
+                                                kWhiteColor : kBlackColor,
                                               ),
                                               SizedBox(width: MediaQuery.of(context).size.width * 0.01,),
                                               Text(
@@ -453,6 +460,8 @@ class _SideMenuState extends State<SideMenu> {
                                                   color: menuController.selectedIndex.value == 6
                                                       ? kWhiteColor
                                                       : kBlackColor,
+                                                    fontSize: 16
+
                                                 ),
                                               ),
                                             ],
@@ -471,7 +480,6 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
-
                     ],
                   ),
                 ),

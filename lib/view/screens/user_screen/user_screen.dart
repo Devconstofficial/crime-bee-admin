@@ -72,7 +72,8 @@ class UserScreen extends GetView<UserController> {
                   return DropdownButton<String>(
                     borderRadius: AppStyles.customBorder8,
                     isExpanded: true,
-                    focusColor: kWhiteColor,
+                    dropdownColor: kWhiteColor,
+                    focusColor:    kWhiteColor,
                     value: controller.selectedCrimeType.value.isNotEmpty
                         ? controller.selectedCrimeType.value
                         : null,
@@ -323,7 +324,7 @@ class UserScreen extends GetView<UserController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       Padding(
                         padding: AppStyles().horizontal,
                         child: Row(
@@ -336,8 +337,8 @@ class UserScreen extends GetView<UserController> {
                             ),
                             const Spacer(),
                             Container(
-                              height: 28,
-                              width: 252,
+                              height: 41,
+                              width: width / 4.5,
                               decoration: BoxDecoration(
                                 color: kWhiteColor,
                                 borderRadius: BorderRadius.circular(8),
@@ -349,26 +350,38 @@ class UserScreen extends GetView<UserController> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    const SizedBox(
-                                      width: 220,
-                                      child: MyCustomTextField(
-                                        hintText: 'Search',
-                                        fillColor: kWhiteColor,
-                                        contentPadding: EdgeInsets.all(0),
-                                        prefixIcon: Icon(
-                                          Icons.search_sharp,
-                                          size: 13,
-                                          color: kLightBlackColor,
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 3),
+                                      child: SizedBox(
+                                        width: width / 5.5,
+                                        child: TextField(
+                                          style: AppStyles.workSansTextStyle().copyWith(fontSize: 14.sp,fontWeight: FontWeight.w400),
+                                          decoration: InputDecoration(
+                                              hintText: 'Search',
+                                              fillColor: kWhiteColor,
+                                              hintStyle: AppStyles.workSansTextStyle().copyWith(fontSize: 14,fontWeight: FontWeight.w400,color: ksuffixColor.withOpacity(0.2)),
+                                              // contentPadding: const EdgeInsets.only(top: 9),
+                                              prefixIcon: Icon(
+                                                Icons.search_sharp,
+                                                size: 16,
+                                                color: ksuffixColor.withOpacity(0.2),
+                                              ),
+                                              focusColor: kWhiteColor,
+                                              hoverColor: kWhiteColor,
+                                              focusedBorder: const UnderlineInputBorder(borderSide: BorderSide.none),
+                                              enabledBorder: const UnderlineInputBorder(borderSide: BorderSide.none),
+                                              border: const UnderlineInputBorder(borderSide: BorderSide.none)
+                                          ),
                                         ),
                                       ),
                                     ),
                                     Text(
                                       '⌘/',
-                                      style: AppStyles.workSansTextStyle()
+                                      style: AppStyles.interTextStyle()
                                           .copyWith(
-                                              fontSize: 14.sp,
+                                              fontSize: 14,
                                               fontWeight: FontWeight.w400,
-                                              color: kLightBlackColor),
+                                              color: ksuffixColor.withOpacity(0.2)),
                                     ),
                                   ],
                                 ),
@@ -381,14 +394,10 @@ class UserScreen extends GetView<UserController> {
                                 onTap: () {
                                   controller.toggleNotificationVisibility();
                                 },
-                                child: SvgPicture.asset(
-                                  kNotificationIcon,
+                                child: Image.asset(
+                                  kNotification1Icon,
                                   height: 20,
                                   width: 20,
-                                  colorFilter: const ColorFilter.mode(
-                                    kLightBlackColor,
-                                    BlendMode.srcIn,
-                                  ),
                                 ),
                               ),
                             ),
