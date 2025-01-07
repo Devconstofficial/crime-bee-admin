@@ -112,7 +112,7 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       Obx(() {
                         return MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -173,7 +173,7 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       Obx(() {
                         return MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -235,7 +235,7 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       Obx(() {
                         return MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -297,7 +297,7 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       Obx(() {
                         return MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -359,7 +359,7 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       Obx(() {
                         return MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -420,7 +420,7 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       Obx(() {
                         return MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -480,6 +480,68 @@ class _SideMenuState extends State<SideMenu> {
                           ),
                         );
                       }),
+                      const SizedBox(height: 20,),
+                      Obx(() {
+                        return MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: GestureDetector(
+                            onTap: () {
+                              menuController.onItemTapped(7);
+                              Get.toNamed(kTermsScreenRoute);
+                            },
+                            child: SizedBox(
+                              width: width,
+                              height: 49,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                        height: 49,
+                                        decoration: BoxDecoration(
+                                          color: menuController.selectedIndex.value == 7 ? kPrimaryColor : kWhiteColor,
+                                          borderRadius: const BorderRadius.only(topLeft: Radius.circular(5),bottomLeft: Radius.circular(5)),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only( left: 24),
+                                          child: Row(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              SvgPicture.asset(
+                                                kTermsIcon,
+                                                height: 26,
+                                                width: 26,
+                                                colorFilter: ColorFilter.mode(
+                                                  menuController.selectedIndex.value == 7 ? kWhiteColor : kBlackColor,
+                                                  BlendMode.srcIn,
+                                                ),
+                                              ),
+                                              SizedBox(width: MediaQuery.of(context).size.width * 0.01,),
+                                              Text(
+                                                "Terms",
+                                                style: AppStyles.workSansTextStyle().copyWith(
+                                                    color: menuController.selectedIndex.value == 7
+                                                        ? kWhiteColor
+                                                        : kBlackColor,
+                                                    fontSize: 16
+
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 49,
+                                    width: 5,
+                                    color: menuController.selectedIndex.value == 7 ? kSecondaryColor : kWhiteColor,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ),
@@ -493,7 +555,7 @@ class _SideMenuState extends State<SideMenu> {
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
                     onTap: () {
-                      menuController.onItemTapped(7);
+                      menuController.onItemTapped(8);
                       Get.offAllNamed(kLoginScreenRoute);
                     },
                     child: SizedBox(
@@ -505,7 +567,7 @@ class _SideMenuState extends State<SideMenu> {
                             child: Container(
                                 height: 49,
                                 decoration: BoxDecoration(
-                                  color: menuController.selectedIndex.value == 7 ? kPrimaryColor : kWhiteColor,
+                                  color: menuController.selectedIndex.value == 8 ? kPrimaryColor : kWhiteColor,
                                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(5),bottomLeft: Radius.circular(5)),
                                 ),
                                 child: Padding(
@@ -539,7 +601,7 @@ class _SideMenuState extends State<SideMenu> {
                           Container(
                             height: 49,
                             width: 5,
-                            color: menuController.selectedIndex.value == 7 ? kSecondaryColor : kWhiteColor,
+                            color: menuController.selectedIndex.value == 8 ? kSecondaryColor : kWhiteColor,
                           )
                         ],
                       ),

@@ -25,6 +25,7 @@ String kDeleteDialogIcon = "$basePathIcons/deleteDialog.svg";
 String kLocationIcon = "$basePathIcons/location.png";
 String kClockIcon = "$basePathIcons/clock.png";
 String kComment1Icon = "$basePathIcons/comment1.svg";
+String kTermsIcon = "$basePathIcons/terms.svg";
 
 /// IMAGES
 // String kLogo = "$basePath/logo.png";

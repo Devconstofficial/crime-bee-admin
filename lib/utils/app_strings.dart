@@ -30,6 +30,19 @@ String kSeverity = 'Severity';
 String kDateTimeIncident = 'Date and time of the incident';
 String kDateIncident = 'Date of the incident';
 String kTimeIncident = 'Time of the incident';
+String kTermsText = '1. Clause 1\n\n'
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra condimentum eget purus in. Consectetur eget id morbi amet amet, in. Ipsum viverra pretium tellus neque. Ullamcorper suspendisse aenean leo pharetra in sit semper et. Amet quam placerat sem.\n'
+    '\n'
+    '2. Clause 2\n\n'
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra condimentum eget purus in. Consectetur eget id morbi amet amet, in. Ipsum viverra pretium tellus neque. Ullamcorper suspendisse aenean leo pharetra in sit semper et. Amet quam placerat sem'
+
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra condimentum eget purus in. Consectetur eget id morbi amet amet, in. Ipsum viverra pretium tellus neque. Ullamcorper suspendisse aenean leo pharetra in sit semper et. Amet quam placerat sem.'
+    '\n'
+    '\n'
+    '3. Clause 3\n\n'
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra condimentum eget purus in. Consectetur eget id morbi amet amet, in. Ipsum viverra pretium tellus neque. Ullamcorper suspendisse aenean leo pharetra in sit semper et. Amet quam placerat sem'
+
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra condimentum eget purus in. Consectetur eget id morbi amet amet, in. Ipsum viverra pretium tellus neque. Ullamcorper suspendisse aenean leo pharetra in sit semper et. Amet quam placerat sem.';
 String kTheftDetail = 'Reported theft at Central Park, London. A black backpack stolen near the fountain. Suspect description: male, mid-30s, wearing a grey hoodie. Incident occurred at 3:00 PM';
 String kDeleteDetail = 'Are you sure you want to delete this item? This action is irreversible and will permanently remove the selected record from the system.';
 
@@ -44,5 +57,6 @@ const String kNotificationScreenRoute = "/notification-screen-route";
 const String kCommentScreenRoute = "/comment-screen-route";
 const String kBlogScreenRoute = "/blog-screen-route";
 const String kDashboardScreenRoute = "/dashboard-screen-route";
+const String kTermsScreenRoute = "/terms-screen-route";
 
 

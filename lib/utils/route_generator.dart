@@ -9,6 +9,7 @@ import '../view/screens/add_crime_screen/add_crime_dashboard.dart';
 import '../view/screens/add_crime_screen/add_crime_screen.dart';
 import '../view/screens/blogs_screen/blog_screen.dart';
 import '../view/screens/dashboard/dashboard_screen.dart';
+import '../view/screens/terms_policies_screen/terms_screen.dart';
 import 'app_strings.dart';
 
 class RouteGenerator {
@@ -23,6 +24,7 @@ class RouteGenerator {
       GetPage(name: kBlogScreenRoute, page: () => const BlogScreen(), binding: ScreenBindings(),transition: Transition.noTransition),
       GetPage(name: kAddCrimeScreenRoute, page: () => const AddCrimeScreen(), binding: ScreenBindings(),transition: Transition.noTransition),
       GetPage(name: kLoginScreenRoute, page: () => const LoginScreen(), binding: ScreenBindings(),transition: Transition.noTransition),
+      GetPage(name: kTermsScreenRoute, page: () => const TermsScreen(), binding: ScreenBindings(),transition: Transition.noTransition),
     ];
   }
 }

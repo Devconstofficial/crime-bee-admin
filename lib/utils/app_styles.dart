@@ -26,6 +26,9 @@ class AppStyles {
   static TextStyle interTextStyle() => GoogleFonts.inter(
     fontSize: 16.sp, fontWeight: FontWeight.w500, color: kBlackColor,);
 
+  static TextStyle latoTextStyle() => GoogleFonts.lato(
+    fontSize: 16.sp, fontWeight: FontWeight.w400, color: kTermsColor,);
+
   static BorderRadius get customBorderAll => BorderRadius.all(
     Radius.circular(8),
   );

@@ -7,6 +7,7 @@ import '../view/screens/auth_screen/controller/auth_controller.dart';
 import '../view/screens/comment_screen/controller/comment_controller.dart';
 import '../view/screens/dashboard/controller/dashboard_controller.dart';
 import '../view/screens/subscription_screen/controller/subcription_controller.dart';
+import '../view/screens/terms_policies_screen/controller/terms_screen.dart';
 import '../view/screens/user_screen/controller/user_controller.dart';
 
 
@@ -21,5 +22,6 @@ class ScreenBindings extends Bindings {
     Get.lazyPut(() => NotificationController());
     Get.lazyPut(() => BlogController());
     Get.lazyPut(() => AuthController());
+    Get.lazyPut(() => TermsController());
   }
 }

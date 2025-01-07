@@ -9,6 +9,7 @@ const Color kBrownColor = Color(0xff792B2B);
 const Color kBackGroundColor = Color(0xFFF2F2F2);
 const Color kWhiteColor = Color(0xffFFFFFF);
 const Color kBlackColor = Color(0xff000000);
+const Color kTermsColor = Color(0xff494949);
 const Color kBlackColor1 = Color(0xff202020);
 const Color kLightBlack = Color(0xff777777);
 Color kHintColor = kBlackColor.withOpacity(0.6);
