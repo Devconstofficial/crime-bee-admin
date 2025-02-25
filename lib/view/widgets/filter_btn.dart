@@ -46,11 +46,15 @@ class FilterButton extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                  text,
-                  style: AppStyles.workSansTextStyle().copyWith(fontSize: fontSize ?? 16.sp,fontWeight: FontWeight.w600,color: textColor ?? kWhiteColor)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                    text,
+                    style: AppStyles.workSansTextStyle().copyWith(fontSize: fontSize ?? 16.sp,fontWeight: FontWeight.w600,color: textColor ?? kWhiteColor)
+                ),
               ),
             ],
           ),

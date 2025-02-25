@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'utils/app_strings.dart';
 import 'utils/screen_bindings.dart';
 
-void main() async{
+void main() async {
   runApp(const MyApp());
 }
 
@@ -30,7 +30,10 @@ class MyApp extends StatelessWidget {
         iconTheme: IconThemeData(color: kBlackColor),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        hintStyle: AppStyles.workSansTextStyle().copyWith(fontSize: 14,color: kLightBlackColor,),
+        hintStyle: AppStyles.workSansTextStyle().copyWith(
+          fontSize: 14,
+          color: kLightBlackColor,
+        ),
         prefixIconColor: kLightBlackColor,
         contentPadding: const EdgeInsets.symmetric(
           vertical: 8,
@@ -52,7 +55,7 @@ class MyApp extends StatelessWidget {
           borderSide: const BorderSide(color: kSecondaryColor),
         ),
       ),
-      textTheme: TextTheme(
+      textTheme: const TextTheme(
         titleMedium: TextStyle(color: kBlackColor, fontSize: 14),
         bodyLarge: TextStyle(color: kBlackColor, fontSize: 14),
         bodyMedium: TextStyle(color: kBlackColor, fontSize: 14),
@@ -69,20 +72,23 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return GetMaterialApp(
-            theme: _buildTheme(Brightness.light),
-            title: kAppName,
-            debugShowCheckedModeBanner: false,
-            initialBinding: ScreenBindings(),
-            initialRoute: kLoginScreenRoute,
-            getPages: RouteGenerator.getPages(),
-            builder: (context, child) {
-              return MediaQuery(
-                  data: MediaQuery.of(context).copyWith(
-                      textScaleFactor: MediaQuery.of(context)
-                          .textScaleFactor
-                          .clamp(1.0, 1.0)),
-                  child: child!);
-            });
+          theme: _buildTheme(Brightness.light),
+          title: kAppName,
+          debugShowCheckedModeBanner: false,
+          initialBinding: ScreenBindings(),
+          initialRoute: kLoginScreenRoute,
+          getPages: RouteGenerator.getPages(),
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: TextScaler.linear(
+                  MediaQuery.of(context).textScaleFactor.clamp(1.0, 1.0),
+                ),
+              ),
+              child: child!,
+            );
+          },
+        );
       },
     );
   }

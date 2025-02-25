@@ -1,44 +1,90 @@
-import 'package:fl_chart/fl_chart.dart';
+import 'package:crime_bee_admin/view/models/user_model.dart';
+import 'package:crime_bee_admin/web_services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../utils/app_colors.dart';
 
 
 class UserController extends GetxController {
-  var selectedCrimeType = ''.obs;
+  final UserService _userService = UserService();
+  RxString selectedUserStatus = ''.obs;
   RxList notifications = [].obs;
   RxList activities = [].obs;
-  var selectedFilters = <String>{}.obs;
-  var isNotificationVisible = false.obs;
+  RxList<UserModel> users = RxList<UserModel>();
+  RxInt currentPage = 1.obs,totalPages=1.obs;
+  Set<String> selectedFilters = <String>{};
+  RxBool isNotificationVisible = false.obs,
+      isUserLoading = false.obs,
+      isSetUpdate = false.obs,
+      isTableUpdate = false.obs;
 
+  void getUserList() async {
+    if(isUserLoading.value) return;
+    isUserLoading.value = true;
+    var result = await _userService.getUsers(pageNo: currentPage.value,);
+    if(result is List<UserModel>) {
+      if(result.isEmpty) {
+        totalPages.value =result.first.totalPage;
+        currentPage.value =result.first.currentPage;
+      }
+      users.clear();
+      users.addAll(result);
+    } else {
+      Get.snackbar('Error', result.toString(),);
+    }
+    isUserLoading.value = false;
+  }
 
-  void toggleNotificationVisibility() {
-    isNotificationVisible.value = !isNotificationVisible.value;
+  Future<void> deleteUser({required String userId}) async {
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(),
+      ),
+      barrierDismissible: false,
+    );
+    var result = await _userService.deleteUser(userId: userId,);
+    Get.back();
+    if(result is bool) {
+      // user delete
+      users.removeWhere((test)=>test.userId==userId,);
+      isTableUpdate.toggle();
+    } else {
+      Get.snackbar('Error', result.toString(),);
+    }
+    isUserLoading.value = false;
+  }
+
+  Future<void> changeStatus({required String userId}) async {
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(),
+      ),
+      barrierDismissible: false,
+    );
+    var result = await _userService.changeStatus(userId: userId,status: selectedUserStatus.toLowerCase(),);
+    Get.back();
+    if(result is bool) {
+      // user status changed
+      int index = users.indexWhere((test)=>test.userId==userId,);
+      if(index>=0) {
+        final user = users[index];
+        users[index] = user..status = selectedUserStatus.toLowerCase();
+      }
+      isTableUpdate.toggle();
+    } else {
+      Get.snackbar('Error', result.toString(),);
+    }
+    isUserLoading.value = false;
   }
 
   void toggleFilter(String filter) {
-    if (selectedFilters.contains(filter)) {
-      selectedFilters.remove(filter);
+    if (selectedFilters.contains(filter.toLowerCase())) {
+      selectedFilters.remove(filter.toLowerCase());
     } else {
-      selectedFilters.add(filter);
+      selectedFilters.add(filter.toLowerCase());
     }
+    isSetUpdate.toggle();
   }
-
-  final List<Map<String, dynamic>> allUsers = [
-    {"id": "00001", "name": "Christine Brooks", "reports": 35, "status": "Suspended","statusBackColor" : kLightBlue.withOpacity(0.2), "StatusColor" : kLightBlue},
-    {"id": "00002", "name": "Rosie Pearson", "reports": 33, "status": "Active","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
-    {"id": "00003", "name": "Darrell Caldwell", "reports": 31, "status": "Ban","statusBackColor" : kPrimaryColor.withOpacity(0.2), "StatusColor" : kPrimaryColor},
-    {"id": "00004", "name": "Gilbert Johnston", "reports": 29, "status": "Ban","statusBackColor" : kPrimaryColor.withOpacity(0.2), "StatusColor" : kPrimaryColor},
-    {"id": "00005", "name": "Alan Cain", "reports": 28, "status": "Active","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
-    {"id": "00006", "name": "Alfred Murray", "reports": 21, "status": "Suspended","statusBackColor" : kLightBlue.withOpacity(0.2), "StatusColor" : kLightBlue},
-    {"id": "00007", "name": "Bryan Ross", "reports": 24, "status": "Active","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
-    {"id": "00008", "name": "Jessica Cook", "reports": 30, "status": "Suspended","statusBackColor" : kLightBlue.withOpacity(0.2), "StatusColor" : kLightBlue},
-    {"id": "00009", "name": "Linda Diaz", "reports": 26, "status": "Ban","statusBackColor" : kPrimaryColor.withOpacity(0.2), "StatusColor" : kPrimaryColor},
-    {"id": "00010", "name": "Matthew Fisher", "reports": 25, "status": "Active","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
-    {"id": "00011", "name": "Theresa Phillips", "reports": 27, "status": "Suspended","statusBackColor" : kLightBlue.withOpacity(0.2), "StatusColor" : kLightBlue},
-    {"id": "00012", "name": "Charles Moore", "reports": 20, "status": "Ban","statusBackColor" : kPrimaryColor.withOpacity(0.2), "StatusColor" : kPrimaryColor},
-    {"id": "00013", "name": "Jennifer White", "reports": 29, "status": "Active","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
-  ];
 
   void fetchNotifications() {
     notifications.addAll([
@@ -59,49 +105,35 @@ class UserController extends GetxController {
   }
 
   @override
-  onInit(){
+  void onInit(){
     super.onInit();
+    getUserList();
     fetchNotifications();
     fetchActivities();
   }
 
-  final int itemsPerPage = 7;
-
-  final RxInt currentPage = 1.obs;
-
-  List<Map<String, dynamic>> get currentPageUsers {
-    final startIndex = (currentPage.value - 1) * itemsPerPage;
-    final endIndex = startIndex + itemsPerPage;
-    return allUsers.sublist(
-      startIndex,
-      endIndex > allUsers.length ? allUsers.length : endIndex,
-    );
-  }
-
-  int get totalPages => (allUsers.length / itemsPerPage).ceil();
-
   void changePage(int pageNumber) {
-    if (pageNumber > 0 && pageNumber <= totalPages) {
+    if(isUserLoading.value)return;
+    if (pageNumber > 0 && pageNumber <= totalPages.value) {
       currentPage.value = pageNumber;
+      getUserList();
     }
   }
 
   void goToPreviousPage() {
-    if (currentPage.value > 1) {
-      currentPage.value -= 1;
-    }
+    if(isUserLoading.value)return;
+    if(currentPage.value<=3)return;
+    currentPage.value -= 1;
+    getUserList();
+
   }
 
-  // Next button functionality
   void goToNextPage() {
-    if (currentPage.value < totalPages) {
+    if(isUserLoading.value)return;
+    if (currentPage.value < totalPages.value) {
       currentPage.value += 1;
+      getUserList();
     }
   }
 
-  // Check if back button should be disabled
-  bool get isBackButtonDisabled => currentPage.value == 1;
-
-  // Check if next button should be disabled
-  bool get isNextButtonDisabled => currentPage.value == totalPages;
 }

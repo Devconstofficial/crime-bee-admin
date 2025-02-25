@@ -1,21 +1,20 @@
 import 'dart:async';
+import 'package:crime_bee_admin/web_services/location_service.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'add_crime_controller.dart';
+import '../../../models/get_location_model.dart';
 
 class LocationPickerController extends GetxController {
+  final LocationService _locationService = LocationService();
   final searchController = TextEditingController();
-  final selectedAddress = ''.obs;
-  final isLocationLoaded = false.obs;
-  final isLoadingAddress = false.obs;
-  LatLng currentLocation = LatLng(37.4219983, -122.084);
-  final mapController = Completer<GoogleMapController>();
-  MarkerId markerId = MarkerId("currentLocation");
-  RxSet<Marker> markers = <Marker>{}.obs; 
+  GoogleMapController? mapController;
+  RxString selectedAddress = ''.obs;
+  RxBool isLocationLoaded = false.obs,isLoadingAddress = false.obs;
+  LatLng? currentLocation;
+  MarkerId markerId = const MarkerId("currentLocation");
+  RxSet<Marker> markers = <Marker>{}.obs;
 
   @override
   void onInit() async {
@@ -27,24 +26,6 @@ class LocationPickerController extends GetxController {
       }
     });
   }
-
-  // Future<void> _getCurrentLocation() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   double? longitude = prefs.getDouble('longitude');
-  //   double? latitude = prefs.getDouble('latitude');
-  //
-  //   if (longitude != null && latitude != null) {
-  //     currentLocation = LatLng(latitude, longitude);
-  //   } else {
-  //     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-  //     currentLocation = LatLng(position.latitude, position.longitude);
-  //   }
-  //
-  //   await _getAddressFromLatLng(currentLocation);
-  //   isLocationLoaded.value = true;
-  //
-  //   _updateMarker(currentLocation);
-  // }
 
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
@@ -71,70 +52,52 @@ class LocationPickerController extends GetxController {
       debugPrint("Location permission denied forever. Cannot request permissions.");
       return;
     }
-
-    // Fetch stored location if available
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    double? longitude = prefs.getDouble('longitude');
-    double? latitude = prefs.getDouble('latitude');
-
-    // Use stored location or fetch a new one
-    if (longitude != null && latitude != null) {
-      currentLocation = LatLng(latitude, longitude);
-    } else {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-      currentLocation = LatLng(position.latitude, position.longitude);
-    }
-
-    await _getAddressFromLatLng(currentLocation);
+    Position position = await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
+    );
+    currentLocation = LatLng(position.latitude, position.longitude);
+    await _getAddressFromLatLng(currentLocation!);
     isLocationLoaded.value = true;
 
-    _updateMarker(currentLocation);
+    _updateMarker(currentLocation!);
   }
 
   Future<void> _getAddressFromLatLng(LatLng position) async {
     isLoadingAddress.value = true;
-    try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-      isLoadingAddress.value = false;
+    String placeMarks = await _locationService.getPlaceUsingLATLNG(
+      lat: position.latitude,
+      lng: position.longitude,
+    );
+    isLoadingAddress.value = false;
 
-      if (placemarks.isNotEmpty) {
-        Placemark place = placemarks[0];
-        selectedAddress.value = "${place.street}, ${place.locality}, ${place.country}";
-      } else {
-        selectedAddress.value = "No address available for this location.";
-      }
-    } catch (e) {
-      isLoadingAddress.value = false;
-      selectedAddress.value = "Failed to fetch address. Error: $e";
-      debugPrint("Error in _getAddressFromLatLng: $e");
+    if (placeMarks.isNotEmpty && placeMarks.startsWith("Success:")) {
+      selectedAddress.value = placeMarks.substring(8);
+    } else {
+      selectedAddress.value = "Address not found";
     }
   }
 
   void searchLocation(String query) async {
     try {
-      List<Location> locations = await locationFromAddress(query);
-      if (locations.isNotEmpty) {
-        LatLng position = LatLng(locations[0].latitude, locations[0].longitude);
-        updateLocationFromSearch(position);
-      }
+      LatLng position = await _locationService.searchPlaceApi(
+        address: query,
+      );
+      updateLocationFromSearch(position);
     } catch (e) {
       print("Error in searchLocation: $e");
     }
   }
 
   void updateLocationFromSearch(LatLng position) async {
+    if(mapController==null) return;
     currentLocation = position;
-    final GoogleMapController controller = await mapController.future;
-    controller.animateCamera(
-      CameraUpdate.newLatLngZoom(currentLocation, 14),
+    mapController!.animateCamera(
+      CameraUpdate.newLatLngZoom(currentLocation!, 14),
     );
-    await _getAddressFromLatLng(currentLocation); 
-    _updateMarker(currentLocation); 
+    await _getAddressFromLatLng(currentLocation!);
+    _updateMarker(currentLocation!);
   }
 
   void onMapCameraMove(CameraPosition cameraPosition) {
@@ -142,20 +105,23 @@ class LocationPickerController extends GetxController {
   }
 
   Future<void> onMapCameraIdle() async {
-    await _getAddressFromLatLng(currentLocation);
-    _updateMarker(currentLocation);
+    if(currentLocation==null) {
+      return;
+    }
+    await _getAddressFromLatLng(currentLocation!);
+    _updateMarker(currentLocation!);
   }
 
   void onMarkerDragEnd(LatLng position) async {
     currentLocation = position;
-    await _getAddressFromLatLng(currentLocation); 
-    _updateMarker(currentLocation);
+    await _getAddressFromLatLng(currentLocation!);
+    _updateMarker(currentLocation!);
   }
 
   void onMapTap(LatLng position) async {
     currentLocation = position;
     await _getAddressFromLatLng(position);
-    _updateMarker(position); 
+    _updateMarker(position);
   }
 
   void _updateMarker(LatLng newPosition) {
@@ -169,8 +135,14 @@ class LocationPickerController extends GetxController {
   }
 
   void pickLocation() {
-    Get.find<AddCrimeController>().pickLocation.value = selectedAddress.value;
-    Get.back();
+    if(currentLocation==null) {
+      return;
+    }
+    GetLocationModel locationModel = GetLocationModel.empty();
+    locationModel.lat = currentLocation!.latitude;
+    locationModel.lng = currentLocation!.longitude;
+    locationModel.location = selectedAddress.value;
+    Get.back(result: locationModel,);
   }
 
 }

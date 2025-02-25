@@ -1,108 +1,200 @@
-import 'package:fl_chart/fl_chart.dart';
+import 'package:crime_bee_admin/view/models/notification_model.dart';
+import 'package:crime_bee_admin/web_services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../utils/app_colors.dart';
 
-
 class NotificationController extends GetxController {
-  var selectedNotiType = ''.obs;
-  var allUserType = ''.obs;
-  RxList notifications = [].obs;
+  final NotificationService _notificationService = NotificationService();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController specificUserId = TextEditingController();
+  RxString selectedNotificationType = ''.obs, allUserType = ''.obs;
+  RxList<NotificationModel> notifications = RxList<NotificationModel>();
   RxList activities = [].obs;
-  var isNotificationVisible = false.obs;
-  var selectedFilters = <String>{}.obs;
+  RxList rawNotifications = [].obs;
+  RxBool isNotificationVisible = false.obs,
+      isDataLoading = false.obs,
+      isFiltersUpdated = false.obs,
+      showSpecificUserField = false.obs,
+      isTableUpdate = false.obs;
+  Set<String> selectedFilters = <String>{};
+  RxInt currentPage = 1.obs, totalPages = 1.obs;
 
+  void getNotifications() async {
+    if (isDataLoading.value) return;
+    isDataLoading.value = true;
+    var result = await _notificationService.getNotifications(
+      pageNo: currentPage.value,
+    );
+    isDataLoading.value = false;
+    if (result is List<NotificationModel>) {
+      notifications.clear();
+      notifications.addAll(result);
+      if (notifications.isNotEmpty) {
+        totalPages.value = notifications.first.totalPage;
+        currentPage.value = notifications.first.currentPage;
+      }
+    } else {
+      Get.snackbar(
+        "Error",
+        result.toString(),
+        colorText: kWhiteColor,
+        backgroundColor: kPrimaryColor,
+      );
+    }
+    isDataLoading.value = false;
+  }
 
   void toggleFilter(String filter) {
-    if (selectedFilters.contains(filter)) {
-      selectedFilters.remove(filter);
+    if (selectedFilters.contains(filter.toLowerCase())) {
+      selectedFilters.remove(filter.toLowerCase());
     } else {
-      selectedFilters.add(filter);
+      selectedFilters.add(filter.toLowerCase());
     }
-  }
-
-  void toggleNotificationVisibility() {
-    isNotificationVisible.value = !isNotificationVisible.value;
-  }
-
-  void fetchNotifications() {
-    notifications.addAll([
-      {'title': 'New Host registered', 'time': '59 minutes ago', "backColor" : kPrimaryColor,},
-      {'title': 'New Crime Reported', 'time': '1 hour ago',"backColor" : kOrangeColor,},
-      {'title': 'Crime Resolved', 'time': '2 hours ago',"backColor" : kLightBlue,},
-      {'title': 'Update on your case', 'time': '3 hours ago',"backColor" : kGrey,},
-    ]);
+    isFiltersUpdated.toggle();
   }
 
   void fetchActivities() {
     activities.addAll([
-      {'title': 'Ahmad just cancelled his...', 'time': 'Just now',"backColor" : kPrimaryColor,},
-      {'title': 'John updated the crime report...', 'time': '5 minutes ago',"backColor" : kOrangeColor,},
-      {'title': 'Jane resolved a case', 'time': '10 minutes ago',"backColor" : kLightBlue,},
-      {'title': 'System generated report', 'time': '1 hour ago',"backColor" : kGrey,},
+      {
+        'title': 'Ahmad just cancelled his...',
+        'time': 'Just now',
+        "backColor": kPrimaryColor,
+      },
+      {
+        'title': 'John updated the crime report...',
+        'time': '5 minutes ago',
+        "backColor": kOrangeColor,
+      },
+      {
+        'title': 'Jane resolved a case',
+        'time': '10 minutes ago',
+        "backColor": kLightBlue,
+      },
+      {
+        'title': 'System generated report',
+        'time': '1 hour ago',
+        "backColor": kGrey,
+      },
     ]);
   }
 
-  @override
-  onInit(){
-    super.onInit();
-    fetchNotifications();
-    fetchActivities();
-  }
-
-  final List<Map<String, dynamic>> allUsers = [
-    {"userType": "All", "Type": "Crime Alert", "date": "07/12/2024","title" : "New High-Risk"},
-    {"userType": "All", "Type": "Crime Alert", "date": "07/12/2024","title" : "New High-Risk"},
-    {"userType": "All", "Type": "Crime Alert", "date": "07/12/2024","title" : "New High-Risk"},
-    {"userType": "All", "Type": "Crime Alert", "date": "07/12/2024","title" : "New High-Risk"},
-    {"userType": "All", "Type": "Crime Alert", "date": "07/12/2024","title" : "New High-Risk"},
-    {"userType": "All", "Type": "Crime Alert", "date": "07/12/2024","title" : "New High-Risk"},
-    {"userType": "All", "Type": "Crime Alert", "date": "07/12/2024","title" : "New High-Risk"},
-    {"userType": "All", "Type": "Crime Alert", "date": "07/12/2024","title" : "New High-Risk"},
-    {"userType": "All", "Type": "Crime Alert", "date": "07/12/2024","title" : "New High-Risk"},
-    {"userType": "All", "Type": "Crime Alert", "date": "07/12/2024","title" : "New High-Risk"},
-    {"userType": "All", "Type": "Crime Alert", "date": "07/12/2024","title" : "New High-Risk"},
-    {"userType": "All", "Type": "Crime Alert", "date": "07/12/2024","title" : "New High-Risk"},
-    {"userType": "All", "Type": "Crime Alert", "date": "07/12/2024","title" : "New High-Risk"},
-  ];
-
-  final int itemsPerPage = 5;
-
-  final RxInt currentPage = 1.obs;
-
-  List<Map<String, dynamic>> get currentPageUsers {
-    final startIndex = (currentPage.value - 1) * itemsPerPage;
-    final endIndex = startIndex + itemsPerPage;
-    return allUsers.sublist(
-      startIndex,
-      endIndex > allUsers.length ? allUsers.length : endIndex,
+  void addNewNotification() async {
+    if (selectedNotificationType.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please select notification type",
+        backgroundColor: kPrimaryColor,
+        colorText: kWhiteColor,
+      );
+      return;
+    }
+    if (titleController.text.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please add title first",
+        backgroundColor: kPrimaryColor,
+        colorText: kWhiteColor,
+      );
+      return;
+    }
+    if (descriptionController.text.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please add description first",
+        backgroundColor: kPrimaryColor,
+        colorText: kWhiteColor,
+      );
+      return;
+    }
+    if (descriptionController.text.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please add description first",
+        backgroundColor: kPrimaryColor,
+        colorText: kWhiteColor,
+      );
+      return;
+    }
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(),
+      ),
+      barrierDismissible: false,
     );
+    NotificationModel notificationModel = NotificationModel.empty();
+    notificationModel.title = titleController.text;
+    notificationModel.body = descriptionController.text;
+    notificationModel.recipientId = specificUserId.text;
+    notificationModel.createdAt = DateTime.now().toUtc().toIso8601String();
+    notificationModel.data = {
+      "type": selectedNotificationType.toLowerCase(),
+    };
+    var result = await _notificationService.addNewNotification(
+      notification: notificationModel,
+    );
+    Get.back();
+    if(result is NotificationModel) {
+      Get.back();
+      notifications.insert(0, result);
+    } else {
+      Get.snackbar(
+        "Error",
+        result.toString(),
+        backgroundColor: kPrimaryColor,
+        colorText: kWhiteColor,
+      );
+    }
+    isTableUpdate.toggle();
   }
 
-  int get totalPages => (allUsers.length / itemsPerPage).ceil();
+  void deleteNotificationById(String notificationId) async {
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(),
+      ),
+      barrierDismissible: false,
+    );
+    var result = await _notificationService.deleteNotification(
+      notificationId: notificationId,
+    );
+    Get.back();
+    if (result is bool) {
+      getNotifications();
+    } else {
+      Get.snackbar(
+        "Error",
+        result.toString(),
+        colorText: kWhiteColor,
+        backgroundColor: kPrimaryColor,
+      );
+    }
+  }
+
+  @override
+  onInit() {
+    super.onInit();
+    getNotifications();
+  }
 
   void changePage(int pageNumber) {
-    if (pageNumber > 0 && pageNumber <= totalPages) {
+    if (isDataLoading.value) return;
+    if (pageNumber > 0 && pageNumber <= totalPages.value) {
       currentPage.value = pageNumber;
     }
   }
 
   void goToPreviousPage() {
-    if (currentPage.value > 1) {
-      currentPage.value -= 1;
-    }
+    if (isDataLoading.value) return;
+    if (currentPage.value <= 3) return;
+    currentPage.value -= 1;
   }
 
-  // Next button functionality
   void goToNextPage() {
-    if (currentPage.value < totalPages) {
+    if (isDataLoading.value) return;
+    if (currentPage.value < totalPages.value) {
       currentPage.value += 1;
     }
   }
-
-  // Check if back button should be disabled
-  bool get isBackButtonDisabled => currentPage.value == 1;
-
-  // Check if next button should be disabled
-  bool get isNextButtonDisabled => currentPage.value == totalPages;
 }

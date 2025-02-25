@@ -1,4 +1,7 @@
-import 'package:crime_bee_admin/utils/app_strings.dart';
+import 'package:crime_bee_admin/view/models/crime_category_model.dart';
+import 'package:crime_bee_admin/view/models/crime_model.dart';
+import 'package:crime_bee_admin/view/models/get_location_model.dart';
+import 'package:crime_bee_admin/web_services/crime_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../utils/app_colors.dart';
@@ -6,41 +9,61 @@ import 'package:table_calendar/table_calendar.dart';
 
 
 class AddCrimeController extends GetxController {
-  TextEditingController typeofCrimeController = TextEditingController();
-  TextEditingController severityLevelController = TextEditingController();
-  TextEditingController locationController = TextEditingController();
-  TextEditingController dateIncidentController = TextEditingController();
-  TextEditingController dateIncidentEditController = TextEditingController();
-  TextEditingController timeIncidentController = TextEditingController();
-  TextEditingController timeIncidentEditController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  var pickLocation = kLocation.obs;
-  var selectedCrimeType = ''.obs;
-  var selectedCrimeType1 = ''.obs;
-  var selectedSeverityLevel = ''.obs;
-  var selectedSeverityLevel1 = ''.obs;
-  Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
-  Rx<DateTime?> selectedDateEdit = Rx<DateTime?>(null);
-  Rx<String> selectedTime = Rx<String>("time");
-  Rx<String> selectedTime1 = Rx<String>("time");
-  Rx<bool> isAm = true.obs;
-  Rx<bool> isAm1 = true.obs;
+  final TextEditingController typeofCrimeController = TextEditingController();
+  final TextEditingController severityLevelController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController dateIncidentController = TextEditingController();
+  final TextEditingController dateIncidentEditController = TextEditingController();
+  final TextEditingController timeIncidentController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final CrimeService _crimeService = CrimeService();
+  GetLocationModel getLocationModel = GetLocationModel.empty();
+  Rx<CrimeCategoryModel> selectedCrimeType = Rx(CrimeCategoryModel.init());
+  RxString selectSeverityType = "".obs,selectedTime = "time".obs;
+  Rx<DateTime> selectedDate = Rx<DateTime>(DateTime.now());
+  Rx<bool> isAm = true.obs,
+      enabledDiscard = false.obs,
+      enableAddCrime = false.obs,
+      isNotificationVisible = false.obs;
   RxList notifications = [].obs;
   RxList activities = [].obs;
-  var selectedFilters = <String>{}.obs;
 
-  var isNotificationVisible = false.obs;
-
-  void toggleFilter(String filter) {
-    if (selectedFilters.contains(filter)) {
-      selectedFilters.remove(filter);
+  void validateDiscard() {
+    validateAddCrimeButton();
+    if(selectedCrimeType.value.name.isNotEmpty) {
+      enabledDiscard.value = true;
+    } else if(selectSeverityType.isNotEmpty) {
+      enabledDiscard.value = true;
+    } else if(getLocationModel.location.isNotEmpty) {
+      enabledDiscard.value = true;
+    } else if(dateIncidentController.text.isNotEmpty) {
+      enabledDiscard.value = true;
+    } else if(timeIncidentController.text.isNotEmpty) {
+      enabledDiscard.value = true;
+    } else if(descriptionController.text.isNotEmpty) {
+      enabledDiscard.value = true;
     } else {
-      selectedFilters.add(filter);
+      enabledDiscard.value = false;
     }
   }
 
-  void toggleNotificationVisibility() {
-    isNotificationVisible.value = !isNotificationVisible.value;
+  void validateAddCrimeButton() {
+    if(selectedCrimeType.value.name.isNotEmpty && selectSeverityType.isNotEmpty && locationController.text.isNotEmpty && dateIncidentController.text.isNotEmpty && timeIncidentController.text.isNotEmpty && descriptionController.text.isNotEmpty) {
+      enableAddCrime.value = true;
+    } else {
+      enableAddCrime.value = false;
+    }
+  }
+
+  void onDiscardButtonTap() {
+    if(enabledDiscard.isFalse) return;
+    selectedCrimeType.value = CrimeCategoryModel.init();
+    selectSeverityType.value = "";
+    getLocationModel = GetLocationModel.empty();
+    dateIncidentController.clear();
+    timeIncidentController.clear();
+    descriptionController.clear();
+    enabledDiscard.value = false;
   }
 
   void openCalendarDialog(BuildContext context) async {
@@ -51,18 +74,18 @@ class AddCrimeController extends GetxController {
         backgroundColor: kWhiteColor,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Obx(() => SizedBox(
+          child: SizedBox(
             height: 350,
             width: 342,
             child: TableCalendar(
               firstDay: DateTime.utc(2000, 1, 1),
-              lastDay: DateTime.utc(2100, 12, 31),
-              focusedDay: selectedDate.value ?? DateTime.now(),
+              lastDay: DateTime.now(),
+              focusedDay: selectedDate.value,
               selectedDayPredicate: (day) => isSameDay(selectedDate.value, day),
               onDaySelected: (newSelectedDay, newFocusedDay) {
                 selectedDate.value = newSelectedDay;
                 dateIncidentController.text =
-                "${selectedDate.value!.day}-${selectedDate.value!.month}-${selectedDate.value!.year}";
+                "${selectedDate.value.day}-${selectedDate.value.month}-${selectedDate.value.year}";
                 Get.back();
               },
               calendarStyle: CalendarStyle(
@@ -86,56 +109,7 @@ class AddCrimeController extends GetxController {
                 ),
               ),
             ),
-          )),
-        ),
-      ),
-    );
-  }
-
-  void openCalendarDialog1(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        backgroundColor: kWhiteColor,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Obx(() => SizedBox(
-            height: 350,
-            width: 342,
-            child: TableCalendar(
-              firstDay: DateTime.utc(2000, 1, 1),
-              lastDay: DateTime.utc(2100, 12, 31),
-              focusedDay: selectedDateEdit.value ?? DateTime.now(),
-              selectedDayPredicate: (day) => isSameDay(selectedDateEdit.value, day),
-              onDaySelected: (newSelectedDay, newFocusedDay) {
-                selectedDateEdit.value = newSelectedDay;
-                dateIncidentEditController.text =
-                "${selectedDateEdit.value!.day}-${selectedDateEdit.value!.month}-${selectedDateEdit.value!.year}";
-                Get.back();
-              },
-              calendarStyle: CalendarStyle(
-                todayDecoration: BoxDecoration(
-                  color: kPrimaryColor.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(8),
-                  shape: BoxShape.rectangle,
-                ),
-                selectedDecoration: BoxDecoration(
-                  color: kPrimaryColor,
-                  borderRadius: BorderRadius.circular(8),
-                  shape: BoxShape.rectangle,
-                ),
-              ),
-              headerStyle: const HeaderStyle(
-                formatButtonVisible: false,
-                titleCentered: true,
-                titleTextStyle: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          )),
+          ),
         ),
       ),
     );
@@ -145,7 +119,6 @@ class AddCrimeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _addListeners();
     fetchNotifications();
     fetchActivities();
   }
@@ -174,95 +147,36 @@ class AddCrimeController extends GetxController {
     timeIncidentController.text = selectedTime.value;
   }
 
-  void setSelectedTime1(String time) {
-    selectedTime1.value = time;
-    timeIncidentEditController.text = selectedTime1.value;
-  }
-
-  var isFormValid = false.obs;
-
-
-  void _addListeners() {
-    typeofCrimeController.addListener(_validateForm);
-    severityLevelController.addListener(_validateForm);
-    locationController.addListener(_validateForm);
-    dateIncidentController.addListener(_validateForm);
-  }
-
-  void _validateForm() {
-    isFormValid.value = typeofCrimeController.text.isNotEmpty &&
-        severityLevelController.text.isNotEmpty &&
-        locationController.text.isNotEmpty &&
-        dateIncidentController.text.isNotEmpty;
-  }
-
-  void clearFields() {
-    typeofCrimeController.clear();
-    severityLevelController.clear();
-    locationController.clear();
-    dateIncidentController.clear();
-    descriptionController.clear();
-  }
-
-  void addCrime() {
-    clearFields();
-  }
-
-  final List<Map<String, dynamic>> allUsers = [
-    {"Crime Type": "Theft", "Location": "Baker Street", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"Crime Type": "Assault", "Location": "Oxford Circus", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"Crime Type": "Theft", "Location": "Tower Bridge", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"Crime Type": "Vandalism", "Location": "Oxford Circus", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"Crime Type": "Assault", "Location": "Tower Bridge", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"Crime Type": "Assault", "Location": "Baker Street", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"Crime Type": "Theft", "Location": "Oxford Circus", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"Crime Type": "Vandalism", "Location": "Tower Bridge", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"Crime Type": "Vandalism", "Location": "Baker Street", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"Crime Type": "Theft", "Location": "Oxford Circus", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"Crime Type": "Vandalism", "Location": "Tower Bridge", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"Crime Type": "Theft", "Location": "Oxford Circus", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-    {"Crime Type": "Assault", "Location": "Oxford Circus", "Date & Time": "Dec 6, 2024, 10:45 AM"},
-  ];
-
-  final int itemsPerPage = 7;
-
-  final RxInt currentPage = 1.obs;
-
-  List<Map<String, dynamic>> get currentPageUsers {
-    final startIndex = (currentPage.value - 1) * itemsPerPage;
-    final endIndex = startIndex + itemsPerPage;
-    return allUsers.sublist(
-      startIndex,
-      endIndex > allUsers.length ? allUsers.length : endIndex,
+  void addCrime() async {
+    if(enableAddCrime.isFalse) return;
+    Get.dialog(
+      const Center(child: CircularProgressIndicator(),),
+      barrierDismissible: false
     );
-  }
-
-  int get totalPages => (allUsers.length / itemsPerPage).ceil();
-
-  void changePage(int pageNumber) {
-    if (pageNumber > 0 && pageNumber <= totalPages) {
-      currentPage.value = pageNumber;
+    CrimeModel crimeModel = CrimeModel.empty();
+    crimeModel.location = getLocationModel.location;
+    crimeModel.locationModel = LocationModel.empty()
+      ..lat = getLocationModel.lat
+      ..lng = getLocationModel.lng
+      ..type = "Point";
+    crimeModel.severity = selectSeverityType.value.toLowerCase();
+    crimeModel.crimeType = selectedCrimeType.value.crimeType;
+    crimeModel.description = descriptionController.text;
+    crimeModel.dateTime = selectedDate.value.toUtc().toIso8601String();
+    var result = await _crimeService.addCrimeReport(crimeModel);
+    Get.back();
+    if(result is CrimeModel) {
+      // added New Crime
+    } else {
+      Get.snackbar(
+        "Error",
+        result.toString(),
+        colorText: kWhiteColor,
+        backgroundColor: kPrimaryColor,
+      );
     }
   }
 
-  void goToPreviousPage() {
-    if (currentPage.value > 1) {
-      currentPage.value -= 1;
-    }
-  }
-
-  // Next button functionality
-  void goToNextPage() {
-    if (currentPage.value < totalPages) {
-      currentPage.value += 1;
-    }
-  }
-
-  // Check if back button should be disabled
-  bool get isBackButtonDisabled => currentPage.value == 1;
-
-  // Check if next button should be disabled
-  bool get isNextButtonDisabled => currentPage.value == totalPages;
 
 
 }
