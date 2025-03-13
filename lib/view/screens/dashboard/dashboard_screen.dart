@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pie_chart/pie_chart.dart';
 import '../../../utils/app_colors.dart';
+import '../../../utils/app_images.dart';
 import '../../../utils/app_strings.dart';
 import '../../../utils/app_styles.dart';
 import '../../../utils/common_code.dart';
@@ -83,6 +84,20 @@ class DashboardScreen extends GetView<DashboardController> {
                                     child: Text('Last 1 Month'),
                                   ),
                                 ],
+                              ),
+                              const Spacer(),
+                              MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    controller.isNotificationVisible.toggle();
+                                  },
+                                  child: Image.asset(
+                                    kNotification1Icon,
+                                    height: 20,
+                                    width: 20,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -579,10 +594,15 @@ class DashboardScreen extends GetView<DashboardController> {
                 ),
               ),
             ),
-            NotificationAndActivitySection(
-              notifications: controller.notifications,
-              activities: controller.activities,
-            )
+            Obx(() {
+              return Visibility(
+                visible: controller.isNotificationVisible.value,
+                child: NotificationAndActivitySection(
+                  notifications: controller.notifications,
+                  activities: controller.activities,
+                ),
+              );
+            }),
           ],
         ),
       ),

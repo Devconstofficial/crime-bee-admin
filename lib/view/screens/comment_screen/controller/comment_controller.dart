@@ -1,71 +1,103 @@
-import 'package:fl_chart/fl_chart.dart';
+import 'package:crime_bee_admin/web_services/comment_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import '../../../../utils/app_colors.dart';
-import '../../../../utils/app_images.dart';
 import '../../../models/comment_model.dart';
 
 
 class CommentController extends GetxController {
-  TextEditingController commentController = TextEditingController(text: 'Suspicious activity reported near the station at 9 PM.');
-  TextEditingController threadController = TextEditingController(text: '#12345');
-  TextEditingController usernameController = TextEditingController(text: 'Night Claw');
-  TextEditingController joinedController = TextEditingController(text: '10/05/2024');
-  TextEditingController contributionsController = TextEditingController(text: '34 posts, 56 comments');
-  TextEditingController flaggedCommentController = TextEditingController(text: '2');
+  final CommentService _commentService = CommentService();
+  final TextEditingController commentController = TextEditingController();
+  final TextEditingController threadController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController joinedController = TextEditingController();
+  final TextEditingController contributionsController = TextEditingController();
+  final TextEditingController flaggedCommentController = TextEditingController();
   RxList notifications = [].obs;
   RxList activities = [].obs;
-  var selectedFilters = <String>{}.obs;
-  var isNotificationVisible = false.obs;
-  late GoogleMapController mapController;
+  RxInt currentPage = 1.obs,totalPages = 1.obs;
+  Set<String> selectedFilters = <String>{};
+  RxBool isNotificationVisible = false.obs,
+      isDataLoading = false.obs,
+      isFiltersUpdated = false.obs,
+      isTableUpdate = false.obs;
+  RxList<CommentModel> comments = RxList<CommentModel>();
+  CommentModel selectedComment = CommentModel.empty();
+  List<CommentModel> filteredComments() {
+    if(selectedFilters.contains('Last 30 days'.toLowerCase())) {
+      final previousDate = DateTime.now().subtract(const Duration(days: 30));
+      return comments.where((test) {
+        return DateTime.parse(test.createdAt).isAfter(previousDate);
+      }).toList();
+    } else if(selectedFilters.contains('Last 7 days'.toLowerCase())) {
+      final previousDate = DateTime.now().subtract(const Duration(days: 7));
+      return comments.where((test) {
+        return DateTime.parse(test.createdAt).isAfter(previousDate);
+      }).toList();
+    }
+    return comments;
+  }
 
-  var comments = <CommentModel>[].obs;
-
-  List<Map<String, dynamic>> demoCommentsJson = [
-    {
-      "username": "John Doe",
-      "content": "This is a demo comment!",
-      "likes": 10,
-      "isLiked": false,
-      "image": kUserLogo,
-    },
-    {
-      "username": "Jane Smith",
-      "content": "I totally agree with this.",
-      "likes": 25,
-      "isLiked": true,
-      "image": kUserLogo,
-    },
-    {
-      "username": "Alex Johnson",
-      "content": "I totally agree with this.",
-      "likes": 15,
-      "isLiked": false,
-      "image": kUserLogo,
-    },
-  ];
-
-  void loadDemoComments() {
-    comments.addAll(
-      demoCommentsJson.map((json) => CommentModel.fromJson(json)).toList(),
-    );
+  void getComments() async {
+    if(isDataLoading.value) return;
+    isDataLoading.value = true;
+    var result = await _commentService.getComments(pageNo: currentPage.value);
+    if(result is List<CommentModel>) {
+      comments.clear();
+      comments.addAll(result);
+      if(comments.isNotEmpty) {
+        totalPages.value=comments.first.totalPage;
+        currentPage.value=comments.first.currentPage;
+      }
+    } else {
+      Get.snackbar(
+        "Error",
+        result.toString(),
+        colorText: kWhiteColor,
+        backgroundColor: kPrimaryColor,
+      );
+    }
+    isDataLoading.value = false;
   }
 
   void toggleFilter(String filter) {
-    if (selectedFilters.contains(filter)) {
-      selectedFilters.remove(filter);
+    if (selectedFilters.contains(filter.toLowerCase())) {
+      selectedFilters.remove(filter.toLowerCase());
     } else {
-      selectedFilters.add(filter);
+      selectedFilters.add(filter.toLowerCase());
     }
+    filteredComments();
+    isFiltersUpdated.toggle();
   }
 
-  void onMapCreated(GoogleMapController controller) {
-    mapController = controller;
+  void seeCommentDetails(CommentModel commentModel) {
+    selectedComment = commentModel;
+    commentController.text = selectedComment.text;
+    threadController.text = selectedComment.postId;
+    usernameController.text = selectedComment.commentedBy.name;
+    joinedController.text = selectedComment.commentedBy.createdAt.isEmpty? "Unavailable" : DateFormat("dd-MMM-yyyy").format(DateTime.parse(selectedComment.commentedBy.createdAt));
+    contributionsController.text = "${selectedComment.commentedBy.vigilantePoints}";
+    flaggedCommentController.text = selectedComment.commentId;
   }
 
-  void toggleNotificationVisibility() {
-    isNotificationVisible.value = !isNotificationVisible.value;
+  Future<void> deleteComment({required String commentId}) async {
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(),
+      ),
+      barrierDismissible: false,
+    );
+    var result = await _commentService.deleteComment(commentId: commentId,);
+    Get.back();
+    if(result is bool) {
+      // user delete
+      comments.removeWhere((test)=>test.commentId==commentId,);
+      isTableUpdate.toggle();
+    } else {
+      Get.snackbar('Error', result.toString(),);
+    }
+    isDataLoading.value = false;
   }
 
   void fetchNotifications() {
@@ -87,61 +119,35 @@ class CommentController extends GetxController {
   }
 
   @override
-  onInit(){
+  void onInit() {
     super.onInit();
+    getComments();
     fetchNotifications();
     fetchActivities();
-    loadDemoComments();
   }
 
-  final List<Map<String, dynamic>> allUsers = [
-    {"User": "JohnD", "Comment": "Suspicious activity near...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM"},
-    {"User": "JaneSmith", "Comment": "This is untrue; please clarify...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
-    {"User": "JohnD", "Comment": "Suspicious activity near...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
-    {"User": "JaneSmith", "Comment": "This is untrue; please clarify...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
-    {"User": "JohnD", "Comment": "Suspicious activity near...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
-    {"User": "JaneSmith", "Comment": "This is untrue; please clarify...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
-    {"User": "JaneSmith", "Comment": "This is untrue; please clarify...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
-    {"User": "JohnD", "Comment": "Suspicious activity near...", "PostId": '12345', "Date & Time": "07/12/2024 09:30 AM",},
-  ];
-
-  final int itemsPerPage = 4;
-
-  final RxInt currentPage = 1.obs;
-
-  List<Map<String, dynamic>> get currentPageUsers {
-    final startIndex = (currentPage.value - 1) * itemsPerPage;
-    final endIndex = startIndex + itemsPerPage;
-    return allUsers.sublist(
-      startIndex,
-      endIndex > allUsers.length ? allUsers.length : endIndex,
-    );
-  }
-
-  int get totalPages => (allUsers.length / itemsPerPage).ceil();
 
   void changePage(int pageNumber) {
-    if (pageNumber > 0 && pageNumber <= totalPages) {
+    if(isDataLoading.value)return;
+    if (pageNumber > 0 && pageNumber <= totalPages.value) {
       currentPage.value = pageNumber;
+      getComments();
     }
   }
 
   void goToPreviousPage() {
-    if (currentPage.value > 1) {
-      currentPage.value -= 1;
-    }
+    if(isDataLoading.value)return;
+    if(currentPage.value<=3)return;
+    currentPage.value -= 1;
+    getComments();
+
   }
 
-  // Next button functionality
   void goToNextPage() {
-    if (currentPage.value < totalPages) {
+    if(isDataLoading.value)return;
+    if (currentPage.value < totalPages.value) {
       currentPage.value += 1;
+      getComments();
     }
   }
-
-  // Check if back button should be disabled
-  bool get isBackButtonDisabled => currentPage.value == 1;
-
-  // Check if next button should be disabled
-  bool get isNextButtonDisabled => currentPage.value == totalPages;
 }

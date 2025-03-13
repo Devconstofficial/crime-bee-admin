@@ -11,6 +11,7 @@ class DashboardController extends GetxController {
   var selectedValue = 'Last 7 Days'.obs;
   var selectedValue1 = 'Last 7 Days'.obs;
   var selectedTodayValue = 'Today'.obs;
+  var isNotificationVisible = false.obs;
 
   void updateValue(String value) {
     selectedValue.value = value;

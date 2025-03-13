@@ -17,7 +17,7 @@ class RouteGenerator {
     return [
       GetPage(name: kDashboardScreenRoute, page: () => DashboardScreen(), binding: ScreenBindings(),transition: Transition.noTransition),
       GetPage(name: kUserScreenRoute, page: () => const UserScreen(), binding: ScreenBindings(),transition: Transition.noTransition),
-      GetPage(name: kAddCrimeDashboardRoute, page: () => AddCrimeDashboard(), binding: ScreenBindings(),transition: Transition.noTransition),
+      GetPage(name: kAddCrimeDashboardRoute, page: () => const AddCrimeDashboard(), binding: ScreenBindings(),transition: Transition.noTransition),
       GetPage(name: kSubscriptionScreenRoute, page: () => const SubscriptionScreen(), binding: ScreenBindings(),transition: Transition.noTransition),
       GetPage(name: kNotificationScreenRoute, page: () => const NotificationScreen(), binding: ScreenBindings(),transition: Transition.noTransition),
       GetPage(name: kCommentScreenRoute, page: () => const CommentScreen(), binding: ScreenBindings(),transition: Transition.noTransition),

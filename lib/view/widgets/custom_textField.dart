@@ -18,11 +18,13 @@ class MyCustomTextField extends StatefulWidget {
   final Color? hintColor;
   final Color? textColor;
   final Color? borderColor;
+  final TextInputAction? textInputAction;
   final Color? focusBorderColor;
   final String? errorText;
   final bool showError;
   final bool? isObscureText;
   final bool? errorBool;
+  final bool? enabled;
   final double? width;
   final int? maxLines;
   final ValueChanged<String>? onChanged;
@@ -34,6 +36,7 @@ class MyCustomTextField extends StatefulWidget {
     this.labelText,
     this.suffixIcon,
     this.suffixOnPress,
+    this.textInputAction,
     this.onTap,
     this.prefixIcon,
     this.controller,
@@ -42,6 +45,7 @@ class MyCustomTextField extends StatefulWidget {
     this.hintColor,
     this.textColor,
     this.errorText,
+    this.enabled,
     this.isObscureText = false,
     this.showError = false,
     // required this.fontWeight,
@@ -64,7 +68,9 @@ class _MyCustomTextFieldState extends State<MyCustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      enabled: widget.enabled,
       onTap: widget.onTap,
+      textInputAction: widget.textInputAction,
       controller: widget.controller,
       keyboardType: widget.textInputType,
       obscureText: widget.isObscureText!,
