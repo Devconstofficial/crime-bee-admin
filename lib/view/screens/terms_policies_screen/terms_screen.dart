@@ -1,5 +1,3 @@
-import 'package:crime_bee_admin/utils/app_strings.dart';
-import 'package:crime_bee_admin/view/models/terms_model.dart';
 import 'package:crime_bee_admin/view/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/quill_delta.dart';

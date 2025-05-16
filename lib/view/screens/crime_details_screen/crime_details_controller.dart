@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../utils/app_colors.dart';
 import '../../../web_services/comment_service.dart';
 import '../../../web_services/crime_service.dart';
 import '../../models/comment_model.dart';

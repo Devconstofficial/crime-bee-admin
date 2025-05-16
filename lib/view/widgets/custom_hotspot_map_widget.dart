@@ -110,7 +110,7 @@ class CustomHotspotMapWidget extends StatelessWidget {
                                 children: [
                                   Row(
                                     children: [
-                                      Icon(Icons.location_on_outlined),
+                                      const Icon(Icons.location_on_outlined),
                                       SizedBox(
                                         width: 12.w,
                                       ),

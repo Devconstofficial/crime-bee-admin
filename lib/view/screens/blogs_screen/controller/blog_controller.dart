@@ -1,10 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:crime_bee_admin/utils/app_strings.dart';
 import 'package:get/get.dart';
 import '../../../../utils/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 class BlogController extends GetxController {
   var selectedBlogType = ''.obs;

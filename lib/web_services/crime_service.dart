@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:crime_bee_admin/web_services/web_urls.dart';
 
-import '../utils/common_code.dart';
 import '../view/models/crime_model.dart';
 import '../view/models/response_model.dart';
 import 'http_request_client.dart';

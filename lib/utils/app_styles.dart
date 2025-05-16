@@ -29,24 +29,24 @@ class AppStyles {
   static TextStyle latoTextStyle() => GoogleFonts.lato(
     fontSize: 16.sp, fontWeight: FontWeight.w400, color: kTermsColor,);
 
-  static BorderRadius get customBorderAll => BorderRadius.all(
+  static BorderRadius get customBorderAll => const BorderRadius.all(
     Radius.circular(8),
   );
 
-  static BorderRadius get searchFieldBorder20=> BorderRadius.all(
+  static BorderRadius get searchFieldBorder20=> const BorderRadius.all(
     Radius.circular(20),
   );
 
-  static BorderRadius get customBorder16=> BorderRadius.all(
+  static BorderRadius get customBorder16=> const BorderRadius.all(
     Radius.circular(16),
   );
 
 
-  static BorderRadius get customBorderAll100 => BorderRadius.all(
+  static BorderRadius get customBorderAll100 => const BorderRadius.all(
     Radius.circular(100),
   );
 
-  static BorderRadius get customBorder8 => BorderRadius.all(
+  static BorderRadius get customBorder8 => const BorderRadius.all(
     Radius.circular(8),
   );
 
@@ -76,7 +76,7 @@ class AppStyles {
     boxShadow: [
       BoxShadow(
         color: Colors.black.withOpacity(0.2),
-        offset: Offset(0, 4),
+        offset: const Offset(0, 4),
         blurRadius: 8,
         spreadRadius: 0,
       ),
@@ -88,7 +88,7 @@ class AppStyles {
     boxShadow: [
       BoxShadow(
         color: Colors.black.withOpacity(0.2),
-        offset: Offset(0, 4),
+        offset: const Offset(0, 4),
         blurRadius: 8,
         spreadRadius: 0,
       ),

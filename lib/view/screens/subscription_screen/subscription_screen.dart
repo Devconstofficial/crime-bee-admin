@@ -195,7 +195,7 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 21,),
+                        const SizedBox(height: 21,),
                         Padding(
                           padding: AppStyles().horizontal,
                           child: Row(

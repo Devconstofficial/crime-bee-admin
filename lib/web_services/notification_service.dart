@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:crime_bee_admin/view/models/notification_model.dart';
 import 'package:crime_bee_admin/web_services/web_urls.dart';
 
-import '../view/models/notification_settings_model.dart';
 import '../view/models/response_model.dart';
 import 'http_request_client.dart';
 

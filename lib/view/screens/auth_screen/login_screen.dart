@@ -1,19 +1,12 @@
-import 'dart:developer';
-import 'package:crime_bee_admin/utils/app_strings.dart';
-import 'package:crime_bee_admin/view/screens/auth_screen/controller/auth_controller.dart';
 import 'package:crime_bee_admin/view/screens/auth_screen/controller/login_controller.dart';
-import 'package:crime_bee_admin/view/widgets/custom_button.dart';
 import 'package:crime_bee_admin/view/widgets/custom_textField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:table_calendar/table_calendar.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_images.dart';
 import '../../../utils/app_styles.dart';
 import '../../../utils/common_code.dart';
-import '../../side_menu/side_menu.dart';
 
 class LoginScreen extends GetView<LoginController> {
   const LoginScreen({super.key});
