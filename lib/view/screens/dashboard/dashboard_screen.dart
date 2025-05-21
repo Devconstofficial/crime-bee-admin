@@ -4,6 +4,7 @@ import 'package:crime_bee_admin/view/widgets/dashboard-container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_images.dart';
@@ -40,65 +41,10 @@ class DashboardScreen extends GetView<DashboardController> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Obx(
-                                () {
-                                  return Text(
-                                    controller.selectedTodayValue.value,
-                                    style: AppStyles.workSansTextStyle()
-                                        .copyWith(
-                                            fontSize: 20.sp,
-                                            fontWeight: FontWeight.w600),
-                                  );
-                                },
-                              ),
-                              PopupMenuButton<String>(
-                                color: kWhiteColor,
-                                position: PopupMenuPosition.under,
-                                shape: OutlineInputBorder(
-                                    borderRadius: AppStyles.customBorder8,
-                                    borderSide: BorderSide.none),
-                                icon: const Icon(
-                                    Icons.keyboard_arrow_down_outlined,
-                                    size: 16),
-                                onSelected: (value) {
-                                  controller.updateValue1(value);
-                                },
-                                itemBuilder: (BuildContext context) => [
-                                  const PopupMenuItem(
-                                    value: 'Today',
-                                    child: Text('Today'),
-                                  ),
-                                  const PopupMenuItem(
-                                    value: 'Last 7 Days',
-                                    child: Text('Last 7 Days'),
-                                  ),
-                                  const PopupMenuItem(
-                                    value: 'Last 2 Weeks',
-                                    child: Text('Last 2 Weeks'),
-                                  ),
-                                  const PopupMenuItem(
-                                    value: 'Last 1 Month',
-                                    child: Text('Last 1 Month'),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              MouseRegion(
-                                cursor: SystemMouseCursors.click,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    controller.isNotificationVisible.toggle();
-                                  },
-                                  child: Image.asset(
-                                    kNotification1Icon,
-                                    height: 20,
-                                    width: 20,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          Text(
+                            'Statistics',
+                            style: AppStyles.workSansTextStyle().copyWith(
+                                fontSize: 20.sp, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(
                             height: 28,
@@ -112,35 +58,25 @@ class DashboardScreen extends GetView<DashboardController> {
                                     Get.toNamed(kUserScreenRoute);
                                     menuController.onItemTapped(1);
                                   },
-                                  child: DashboardContainer(
-                                    width: 202,
-                                    height: 112,
-                                    color: kPrimaryColor,
-                                    percent: '+11.01',
-                                    title: kActiveVigi,
-                                    totalNumber: '2200',
+                                  child: Obx(
+                                    () => DashboardContainer(
+                                      width: 202,
+                                      height: 112,
+                                      color: kPrimaryColor,
+                                      title: kActiveVigi,
+                                      totalNumber:
+                                          controller.activeVigilants.value,
+                                    ),
                                   )),
-                              DashboardContainer(
-                                width: 202,
-                                height: 112,
-                                color: kBlueColor,
-                                percent: '-0.03',
-                                title: kRevenue,
-                                totalNumber: '120',
+                              Obx(
+                                () => DashboardContainer(
+                                  width: 202,
+                                  height: 112,
+                                  color: kBlueColor,
+                                  title: kRevenue,
+                                  totalNumber: controller.totalRevenue.value,
+                                ),
                               ),
-                              GestureDetector(
-                                  onTap: () {
-                                    Get.toNamed(kUserScreenRoute);
-                                    menuController.onItemTapped(1);
-                                  },
-                                  child: DashboardContainer(
-                                    width: 202,
-                                    height: 112,
-                                    color: kBrownColor,
-                                    percent: '+11.01',
-                                    title: kTotalCrime,
-                                    totalNumber: '1200',
-                                  )),
                             ],
                           ),
                           const SizedBox(
@@ -175,23 +111,28 @@ class DashboardScreen extends GetView<DashboardController> {
                                           size: 16),
                                       onSelected: (value) {
                                         controller.updateValue(value);
+
+                                        value == 'Annually'
+                                            ? controller
+                                                .fetchRevenueData('yearly')
+                                            : value == 'Monthly'
+                                                ? controller
+                                                    .fetchRevenueData('monthly')
+                                                : controller
+                                                    .fetchRevenueData('weekly');
                                       },
                                       itemBuilder: (BuildContext context) => [
                                         const PopupMenuItem(
-                                          value: 'Last 7 Days',
-                                          child: Text('Last 7 Days'),
+                                          value: 'Weekly',
+                                          child: Text('Weekly'),
                                         ),
                                         const PopupMenuItem(
-                                          value: 'Last 2 Weeks',
-                                          child: Text('Last 2 Weeks'),
+                                          value: 'Monthly',
+                                          child: Text('Monthly'),
                                         ),
                                         const PopupMenuItem(
-                                          value: 'Last 1 Month',
-                                          child: Text('Last 1 Month'),
-                                        ),
-                                        const PopupMenuItem(
-                                          value: 'Last 3 Months',
-                                          child: Text('Last 3 Months'),
+                                          value: 'Annually',
+                                          child: Text('Annually'),
                                         ),
                                       ],
                                     ),
@@ -206,88 +147,104 @@ class DashboardScreen extends GetView<DashboardController> {
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   left: 9, right: 9, top: 9),
-                              child: fl.BarChart(
-                                fl.BarChartData(
-                                  alignment: fl.BarChartAlignment.spaceBetween,
-                                  maxY: 160,
-                                  gridData: const fl.FlGridData(
+                              child: Obx(() {
+                                if (controller.barChartData.isEmpty ||
+                                    controller.barChartIds.isEmpty) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+
+                                return fl.BarChart(
+                                  fl.BarChartData(
+                                    alignment:
+                                        fl.BarChartAlignment.spaceBetween,
+                                    maxY: 160,
+                                    barGroups: controller.barChartData,
+                                    barTouchData: fl.BarTouchData(
+                                      enabled: true,
+                                      touchTooltipData: fl.BarTouchTooltipData(
+                                        getTooltipItem:
+                                            (group, groupIndex, rod, rodIndex) {
+                                          final revenueValue =
+                                              rod.rodStackItems.isNotEmpty
+                                                  ? rod.rodStackItems[0].toY
+                                                  : rod.toY;
+
+                                          return fl.BarTooltipItem(
+                                            revenueValue.toStringAsFixed(2),
+                                            const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    gridData: const fl.FlGridData(
                                       show: true,
                                       horizontalInterval: 40,
                                       drawHorizontalLine: false,
-                                      drawVerticalLine: false),
-                                  titlesData: fl.FlTitlesData(
-                                    leftTitles: fl.AxisTitles(
-                                      sideTitles: fl.SideTitles(
-                                        showTitles: true,
-                                        reservedSize: 32,
-                                        interval: 40,
-                                        getTitlesWidget: (value, meta) {
-                                          if (value % 40 == 0) {
-                                            return Text(
-                                              value.toInt().toString(),
-                                              style: TextStyle(
-                                                color: kBarChartTextColor,
-                                                fontSize: 12.sp,
-                                              ),
-                                            );
-                                          }
-                                          return Container();
-                                        },
-                                      ),
+                                      drawVerticalLine: false,
                                     ),
-                                    bottomTitles: fl.AxisTitles(
-                                      sideTitles: fl.SideTitles(
-                                        showTitles: true,
-                                        getTitlesWidget: (value, meta) {
-                                          TextStyle style =
-                                              AppStyles.interTextStyle()
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 11.sp,
-                                                      color:
-                                                          kBarChartTextColor);
-                                          switch (value.toInt()) {
-                                            case 0:
-                                              return Text('Sep 10',
-                                                  style: style);
-                                            case 1:
-                                              return Text('Sep 11',
-                                                  style: style);
-                                            case 2:
-                                              return Text('Sep 12',
-                                                  style: style);
-                                            case 3:
-                                              return Text('Sep 13',
-                                                  style: style);
-                                            case 4:
-                                              return Text('Sep 14',
-                                                  style: style);
-                                            case 5:
-                                              return Text('Sep 15',
-                                                  style: style);
-                                            case 6:
-                                              return Text('Sep 16',
-                                                  style: style);
-                                            default:
+                                    titlesData: fl.FlTitlesData(
+                                      bottomTitles: fl.AxisTitles(
+                                        sideTitles: fl.SideTitles(
+                                          showTitles: true,
+                                          getTitlesWidget: (value, meta) {
+                                            final index = value.toInt();
+                                            if (index >=
+                                                controller.barChartIds.length) {
                                               return const Text('');
-                                          }
-                                        },
+                                            }
+
+                                            final id =
+                                                controller.barChartIds[index];
+                                            final style =
+                                                AppStyles.interTextStyle()
+                                                    .copyWith(
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 11.sp,
+                                              color: kBarChartTextColor,
+                                            );
+
+                                            String formattedLabel;
+                                            if (RegExp(r'^\d{4}-\d{2}-\d{2}$')
+                                                .hasMatch(id)) {
+                                              final date = DateTime.parse(id);
+                                              formattedLabel =
+                                                  DateFormat("MMM d")
+                                                      .format(date);
+                                            } else {
+                                              formattedLabel = id;
+                                            }
+
+                                            return Text(formattedLabel,
+                                                style: style);
+                                          },
+                                        ),
+                                      ),
+                                      leftTitles: fl.AxisTitles(
+                                        sideTitles: fl.SideTitles(
+                                          showTitles: true,
+                                          reservedSize: 32,
+                                          interval: 40,
+                                          getTitlesWidget: (value, meta) =>
+                                              Text('${value.toInt()}'),
+                                        ),
+                                      ),
+                                      rightTitles: const fl.AxisTitles(
+                                        sideTitles:
+                                            fl.SideTitles(showTitles: false),
+                                      ),
+                                      topTitles: const fl.AxisTitles(
+                                        sideTitles:
+                                            fl.SideTitles(showTitles: false),
                                       ),
                                     ),
-                                    rightTitles: const fl.AxisTitles(
-                                        sideTitles:
-                                            fl.SideTitles(showTitles: false)),
-                                    topTitles: const fl.AxisTitles(
-                                        sideTitles:
-                                            fl.SideTitles(showTitles: false)),
+                                    borderData: fl.FlBorderData(show: false),
                                   ),
-                                  borderData: fl.FlBorderData(
-                                    show: false,
-                                  ),
-                                  barGroups: controller.barChartData,
-                                ),
-                              ),
+                                );
+                              }),
                             ),
                           ),
                           const SizedBox(
@@ -298,111 +255,117 @@ class DashboardScreen extends GetView<DashboardController> {
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.all(32),
-                                  child: Column(
+                                  child: Column(children: [
+                                    Row(
                                       children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                                child: Center(
-                                                  child: Text(
-                                                                                                kCrimeType,
-                                                                                                style: AppStyles.interTextStyle()
-                                                    .copyWith(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                                                                              ),
-                                                )),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 37,
-                                        ),
-                                        Obx(
-                                          () => Center(
-                                            child: PieChart(
-                                              dataMap: controller.dataMap.value,
-                                              chartRadius:
-                                                  MediaQuery.of(context)
-                                                          .size
-                                                          .width /
-                                                      5.9,
-                                              chartType: ChartType.disc,
-                                              ringStrokeWidth: 32,
-                                              centerText: "",
-                                              animationDuration:
-                                                  const Duration(seconds: 2),
-                                              colorList: controller.colorList,
-                                              chartValuesOptions:
-                                                  ChartValuesOptions(
-                                                showChartValuesInPercentage:
-                                                    true,
-                                                showChartValuesOutside: false,
-                                                decimalPlaces: 0,
-                                                showChartValueBackground: false,
-                                                chartValueStyle:
-                                                    AppStyles.interTextStyle()
-                                                        .copyWith(
-                                                  color: kWhiteColor,
-                                                  fontSize: 14.sp,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                              legendOptions:
-                                                  const LegendOptions(
-                                                showLegends: false,
+                                        Expanded(
+                                            child: Center(
+                                          child: Text(
+                                            kCrimeType,
+                                            style: AppStyles.interTextStyle()
+                                                .copyWith(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                          ),
+                                        )),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 37,
+                                    ),
+                                    Center(
+                                      child: Obx(
+                                        () {
+                                          if (controller.dataMap.isEmpty) {
+                                            return const CircularProgressIndicator();
+                                          }
+                                          return PieChart(
+                                            dataMap: controller.dataMap,
+                                            chartRadius: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5.9,
+                                            chartType: ChartType.disc,
+                                            ringStrokeWidth: 32,
+                                            centerText: "",
+                                            animationDuration:
+                                                const Duration(seconds: 2),
+                                            colorList: controller.colorList,
+                                            chartValuesOptions:
+                                                ChartValuesOptions(
+                                              showChartValuesInPercentage: true,
+                                              showChartValuesOutside: false,
+                                              decimalPlaces: 0,
+                                              showChartValueBackground: false,
+                                              chartValueStyle:
+                                                  AppStyles.interTextStyle()
+                                                      .copyWith(
+                                                color: kWhiteColor,
+                                                fontSize: 14.sp,
+                                                fontWeight: FontWeight.w600,
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                        Center(
-                                          child: Wrap(
-                                            runSpacing: 24,
-                                            spacing: 24,
-                                            children: List.generate(
-                                              controller.dataMap.length,
-                                              (index) {
-                                                final label = controller
-                                                    .dataMap.keys
-                                                    .toList()[index];
-                                                final color =
-                                                    controller.colorList[index];
-                                                return SizedBox(
-                                                  width: 79,
-                                                  child: Row(
-                                                    children: [
-                                                      Container(
-                                                        width: 8,
-                                                        height: 6,
-                                                        decoration: BoxDecoration(
-                                                          color: color,
-                                                          shape: BoxShape.circle,
-                                                        ),
+                                            legendOptions: const LegendOptions(
+                                              showLegends: false,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Obx(() {
+                                      if (controller.dataMap.isEmpty) {
+                                        return const SizedBox();
+                                      }
+                                      return Center(
+                                        child: Wrap(
+                                          runSpacing: 24,
+                                          spacing: 24,
+                                          children: List.generate(
+                                            controller.dataMap.length,
+                                            (index) {
+                                              final label = controller
+                                                  .dataMap.keys
+                                                  .toList()[index];
+                                              final color =
+                                                  controller.colorList[index];
+                                              return SizedBox(
+                                                width: 219,
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 8,
+                                                      height: 6,
+                                                      decoration: BoxDecoration(
+                                                        color: color,
+                                                        shape: BoxShape.circle,
                                                       ),
-                                                      const SizedBox(width: 7),
-                                                      Text(label,
-                                                          style: AppStyles
-                                                                  .interTextStyle()
-                                                              .copyWith(
-                                                                  fontSize: 14.sp,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color:
-                                                                      kBlackColor1))
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            ),
+                                                    ),
+                                                    const SizedBox(width: 7),
+                                                    Text(
+                                                      label,
+                                                      style: AppStyles
+                                                              .interTextStyle()
+                                                          .copyWith(
+                                                        fontSize: 14.sp,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: kBlackColor1,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
                                           ),
                                         ),
-                                      ]),
+                                      );
+                                    }),
+                                  ]),
                                 ),
-                                // flex: 1,
                               ),
                               Expanded(
-                                // flex: 2,
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
@@ -414,13 +377,15 @@ class DashboardScreen extends GetView<DashboardController> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Expanded(
-                                              child: Text(
-                                            "Weekly Reported Crimes",
-                                            style: AppStyles.interTextStyle()
-                                                .copyWith(
-                                                    fontSize: 18.sp,
-                                                    fontWeight:
-                                                        FontWeight.w600),
+                                              child: Obx(
+                                            () => Text(
+                                              "${controller.selectedValue1.value} Reported Crimes",
+                                              style: AppStyles.interTextStyle()
+                                                  .copyWith(
+                                                      fontSize: 18.sp,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                            ),
                                           )),
                                           Row(
                                             children: [
@@ -451,25 +416,17 @@ class DashboardScreen extends GetView<DashboardController> {
                                                 onSelected: (value) {
                                                   controller
                                                       .updateValue2(value);
+                                                  controller.fetchAndSetStats();
                                                 },
                                                 itemBuilder:
                                                     (BuildContext context) => [
                                                   const PopupMenuItem(
-                                                    value: 'Last 7 Days',
-                                                    child: Text('Last 7 Days'),
+                                                    value: 'Monthly',
+                                                    child: Text('Monthly'),
                                                   ),
                                                   const PopupMenuItem(
-                                                    value: 'Last 2 Weeks',
-                                                    child: Text('Last 2 Weeks'),
-                                                  ),
-                                                  const PopupMenuItem(
-                                                    value: 'Last 1 Month',
-                                                    child: Text('Last 1 Month'),
-                                                  ),
-                                                  const PopupMenuItem(
-                                                    value: 'Last 3 Months',
-                                                    child:
-                                                        Text('Last 3 Months'),
+                                                    value: 'Annually',
+                                                    child: Text('Annually'),
                                                   ),
                                                 ],
                                               ),
@@ -478,106 +435,139 @@ class DashboardScreen extends GetView<DashboardController> {
                                         ],
                                       ),
                                       const SizedBox(
-                                        height: 37,
+                                        height: 100,
                                       ),
                                       SizedBox(
                                         height: 273,
                                         child: Padding(
                                           padding: const EdgeInsets.only(
                                               left: 9, right: 9, top: 9),
-                                          child: fl.BarChart(
-                                            fl.BarChartData(
-                                              alignment: fl.BarChartAlignment
-                                                  .spaceBetween,
-                                              maxY: 160,
-                                              gridData: const fl.FlGridData(
-                                                  show: true,
-                                                  horizontalInterval: 40,
-                                                  drawHorizontalLine: false,
-                                                  drawVerticalLine: false),
-                                              titlesData: fl.FlTitlesData(
-                                                leftTitles: fl.AxisTitles(
-                                                  sideTitles: fl.SideTitles(
-                                                    showTitles: true,
-                                                    reservedSize: 32,
-                                                    interval: 40,
-                                                    getTitlesWidget:
-                                                        (value, meta) {
-                                                      if (value % 40 == 0) {
-                                                        return Text(
-                                                          value
-                                                              .toInt()
-                                                              .toString(),
-                                                          style: TextStyle(
-                                                            color:
-                                                                kBarChartTextColor,
-                                                            fontSize: 12.sp,
-                                                          ),
-                                                        );
-                                                      }
-                                                      return Container();
-                                                    },
-                                                  ),
-                                                ),
-                                                bottomTitles: fl.AxisTitles(
-                                                  sideTitles: fl.SideTitles(
-                                                    showTitles: true,
-                                                    getTitlesWidget:
-                                                        (value, meta) {
-                                                      TextStyle style = AppStyles
-                                                              .interTextStyle()
-                                                          .copyWith(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              fontSize: 11.sp,
-                                                              color:
-                                                                  kBarChartTextColor);
-                                                      switch (value.toInt()) {
-                                                        case 0:
-                                                          return Text('Mon',
-                                                              style: style);
-                                                        case 1:
-                                                          return Text('Tue',
-                                                              style: style);
-                                                        case 2:
-                                                          return Text('Wed',
-                                                              style: style);
-                                                        case 3:
-                                                          return Text('Thu',
-                                                              style: style);
-                                                        case 4:
-                                                          return Text('Fri',
-                                                              style: style);
-                                                        case 5:
-                                                          return Text('Sat',
-                                                              style: style);
-                                                        case 6:
-                                                          return Text('Sun',
-                                                              style: style);
-                                                        default:
-                                                          return const Text('');
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                                rightTitles:
-                                                    const fl.AxisTitles(
-                                                        sideTitles:
-                                                            fl.SideTitles(
-                                                                showTitles:
-                                                                    false)),
-                                                topTitles: const fl.AxisTitles(
+                                          child: Obx(() {
+                                            if (controller
+                                                    .monthlyRecords.isEmpty ||
+                                                controller.monthsData.isEmpty) {
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            }
+
+                                            return fl.BarChart(
+                                              fl.BarChartData(
+                                                alignment: fl.BarChartAlignment
+                                                    .spaceBetween,
+                                                maxY: controller.maxY.value,
+                                                gridData: const fl.FlGridData(
+                                                    show: true,
+                                                    horizontalInterval: 40,
+                                                    drawHorizontalLine: false,
+                                                    drawVerticalLine: false),
+                                                titlesData: fl.FlTitlesData(
+                                                  leftTitles: fl.AxisTitles(
                                                     sideTitles: fl.SideTitles(
-                                                        showTitles: false)),
+                                                      showTitles: true,
+                                                      reservedSize: 59,
+                                                      interval: 40000,
+                                                      getTitlesWidget:
+                                                          (value, meta) {
+                                                        if (value % 40 == 0) {
+                                                          return Text(
+                                                            value
+                                                                .toInt()
+                                                                .toString(),
+                                                            style: TextStyle(
+                                                              color:
+                                                                  kBarChartTextColor,
+                                                              fontSize: 12.sp,
+                                                            ),
+                                                          );
+                                                        }
+                                                        return Container();
+                                                      },
+                                                    ),
+                                                  ),
+                                                  bottomTitles: fl.AxisTitles(
+                                                    sideTitles: fl.SideTitles(
+                                                      showTitles: true,
+                                                      getTitlesWidget:
+                                                          (value, meta) {
+                                                        final index =
+                                                            value.toInt();
+                                                        if (index <
+                                                            controller
+                                                                .monthsData
+                                                                .length) {
+                                                          final data = controller
+                                                                  .monthsData[
+                                                              index];
+
+                                                          if (controller
+                                                                  .selectedValue1
+                                                                  .value ==
+                                                              "Monthly") {
+                                                            final monthNumber =
+                                                                data[
+                                                                    'monthNumber']!;
+                                                            final year =
+                                                                data['year']!;
+                                                            final monthName = controller
+                                                                .getMonthAbbreviation(
+                                                                    monthNumber);
+                                                            return Text(
+                                                              '$monthName $year',
+                                                              style: AppStyles
+                                                                      .interTextStyle()
+                                                                  .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 11.sp,
+                                                                color:
+                                                                    kBarChartTextColor,
+                                                              ),
+                                                            );
+                                                          } else {
+                                                            final year =
+                                                                data['year']!;
+                                                            return Text(
+                                                              '$year',
+                                                              style: AppStyles
+                                                                      .interTextStyle()
+                                                                  .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 11.sp,
+                                                                color:
+                                                                    kBarChartTextColor,
+                                                              ),
+                                                            );
+                                                          }
+                                                        }
+                                                        return const Text('');
+                                                      },
+                                                    ),
+                                                  ),
+                                                  rightTitles:
+                                                      const fl.AxisTitles(
+                                                          sideTitles:
+                                                              fl.SideTitles(
+                                                                  showTitles:
+                                                                      false)),
+                                                  topTitles:
+                                                      const fl.AxisTitles(
+                                                          sideTitles:
+                                                              fl.SideTitles(
+                                                                  showTitles:
+                                                                      false)),
+                                                ),
+                                                borderData: fl.FlBorderData(
+                                                  show: false,
+                                                ),
+                                                barGroups:
+                                                    controller.monthlyRecords,
                                               ),
-                                              borderData: fl.FlBorderData(
-                                                show: false,
-                                              ),
-                                              barGroups:
-                                                  controller.barChartData,
-                                            ),
-                                          ),
+                                            );
+                                          }),
                                         ),
                                       ),
                                     ],

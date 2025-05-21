@@ -20,9 +20,25 @@ class WebUrls extends _BaseUrl {
 
   // Blog Service
   static const String kGetBlogsUrl = "${_BaseUrl._kBaseUrl}/user/blogs";
+  static const String kGetUserBlogsUrl = "${_BaseUrl._kBaseUrl}/admin/blogs/user";
+  static const String kGetAdminBlogsUrl = "${_BaseUrl._kBaseUrl}/admin/blogs/admin";
+  static const String kCreateBlogByAdminUrl = '${_BaseUrl._kBaseUrl}/admin/blogs';
+  static const String kUpdateBlogByAdminUrl = '${_BaseUrl._kBaseUrl}/admin/blogs';
+  static const String kApproveBlogByAdminUrl = '${_BaseUrl._kBaseUrl}/admin/blogs';
+
+
 
   //user service
   static const String kGetUsersUrl = "${_BaseUrl._kBaseUrl}/admin/users";
+  static const String kGetUserStatsUrl = "${_BaseUrl._kBaseUrl}/admin/stats/user";
+
+  //charts
+  static const String kGetRevenueUrl = '${_BaseUrl._kBaseUrl}/admin/subscriptions/revenue';
+  static const String kGetMonthlyStatsUrl = '${_BaseUrl._kBaseUrl}/admin/stats/monthly';
+  static const String kGetYearlyStatsUrl = '${_BaseUrl._kBaseUrl}/admin/stats/yearly';
+
+  //subscriptions
+  static const String kGetSubscriptionsUrl = '${_BaseUrl._kBaseUrl}/admin/subscriptions';
 
   static String kGeoPlaceApiUrl({required double lat,required double lng,}) {
     return "https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=${_BaseUrl._kMapAPiKey}";

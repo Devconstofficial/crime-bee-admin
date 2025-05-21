@@ -1,11 +1,17 @@
 import 'dart:typed_data';
 
+import 'package:crime_bee_admin/view/models/blog_model.dart';
+import 'package:crime_bee_admin/web_services/blog_service.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../../../../utils/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
 
 class BlogController extends GetxController {
   var selectedBlogType = ''.obs;
+  TextEditingController title = TextEditingController();
+  TextEditingController desc = TextEditingController();
   var selectedBlogStatus = ''.obs;
   RxList notifications = [].obs;
   RxList activities = [].obs;
@@ -20,6 +26,66 @@ class BlogController extends GetxController {
       selectedImage.value = await image.readAsBytes();
     }
   }
+
+  Future<void> createBlogAsAdmin({
+    required String title,
+    required String category,
+    required String description,
+    required String coverImage,
+  }) async {
+    try {
+      final result = await _service.createBlogByAdmin(
+        title: title,
+        category: category,
+        description: description,
+        coverImage: coverImage,
+      );
+
+      if (result is BlogModel) {
+        print("Blog created successfully: ${result.title}");
+        // allUserBlogs.insert(0, result);
+        // applyPagination();
+      } else if (result is Map && result.containsKey("error")) {
+        print("Failed to create blog: ${result['error']}");
+      }
+    } catch (e) {
+      print("Exception while creating blog: $e");
+    }
+  }
+
+  Future<void> updateBlogAsAdmin({
+  required String id,
+  required String title,
+  required String category,
+  required String description,
+  required String coverImage,
+}) async {
+  try {
+    final result = await _service.updateBlogByAdmin(
+      blogId: id,
+      title: title,
+      category: category,
+      description: description,
+      coverImage: coverImage,
+    );
+
+    if (result is BlogModel) {
+      print("Blog updated successfully: ${result.title}");
+
+      final index = allBlogs.indexWhere((blog) => blog.blogId == id);
+      if (index != -1) {
+        allBlogs[index] = result;
+        allBlogs.refresh();
+      }
+
+    } else if (result is Map && result.containsKey("error")) {
+      print("Failed to update blog: ${result['error']}");
+    }
+  } catch (e) {
+    print("Exception while updating blog: $e");
+  }
+}
+
 
   void toggleFilter(String filter) {
     if (selectedFilters.contains(filter)) {
@@ -36,67 +102,182 @@ class BlogController extends GetxController {
   }
 
   @override
-  onInit(){
+  onInit() {
     super.onInit();
-    fetchNotifications();
-    fetchActivities();
+    fetchAllBlogs();
+    fetchAllUserBlogs();
   }
 
-  void fetchNotifications() {
-    notifications.addAll([
-      {'title': 'New Host registered', 'time': '59 minutes ago', "backColor" : kPrimaryColor,},
-      {'title': 'New Crime Reported', 'time': '1 hour ago',"backColor" : kOrangeColor,},
-      {'title': 'Crime Resolved', 'time': '2 hours ago',"backColor" : kLightBlue,},
-      {'title': 'Update on your case', 'time': '3 hours ago',"backColor" : kGrey,},
-    ]);
+  String formatDate(String isoDate) {
+    final DateTime parsedDate = DateTime.parse(isoDate);
+    return DateFormat('dd/MM/yyyy').format(parsedDate);
   }
 
-  void fetchActivities() {
-    activities.addAll([
-      {'title': 'Ahmad just cancelled his...', 'time': 'Just now',"backColor" : kPrimaryColor,},
-      {'title': 'John updated the crime report...', 'time': '5 minutes ago',"backColor" : kOrangeColor,},
-      {'title': 'Jane resolved a case', 'time': '10 minutes ago',"backColor" : kLightBlue,},
-      {'title': 'System generated report', 'time': '1 hour ago',"backColor" : kGrey,},
-    ]);
-  }
+  final RxList<BlogModel> allUserBlogs = <BlogModel>[].obs;
+  final RxList<BlogModel> paginatedUserBlogs = <BlogModel>[].obs;
 
-  final List<Map<String, dynamic>> allBlogs = [
-    {"Title": "Crime Safety Tips", "Category": "Tech", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
-    {"Title": "Crime Safety Tips", "Category": "Crime", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
-    {"Title": "Crime Safety Tips", "Category": "Ai", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
-    {"Title": "Crime Safety Tips", "Category": "Tech", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
-    {"Title": "Crime Safety Tips", "Category": "Ai", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
-    {"Title": "Crime Safety Tips", "Category": "Crime", "Views": '150 Views', "date": "Dec 6, 2024, 10:45 AM"},
-  ];
-
-  final List<Map<String, dynamic>> allUserBlogs = [
-    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "ABC", "Status": "Approved","statusBackColor" : kLightBlue.withOpacity(0.2), "StatusColor" : kLightBlue},
-    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "John Doe", "Status": "Pending","statusBackColor" : kPrimaryColor.withOpacity(0.2), "StatusColor" : kPrimaryColor},
-    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "John Doe", "Status": "Rejected","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
-    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "Jane Smith", "Status": "Approved","statusBackColor" : kLightBlue.withOpacity(0.2), "StatusColor" : kLightBlue},
-    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "Jane Smith", "Status": "Pending","statusBackColor" : kPrimaryColor.withOpacity(0.2), "StatusColor" : kPrimaryColor},
-    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "John Doe", "Status": "Rejected","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
-    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "Jane Smith", "Status": "Rejected","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
-    {"title": "Crime Safety Tips", "submissionDate": "07/12/2024", "submitBy": "John Doe", "Status": "Rejected","statusBackColor" : kBrownColor.withOpacity(0.2), "StatusColor" : kBrownColor},
-
-  ];
-
-  final int itemsPerPage = 3;
   final int userBlogsPerPage = 3;
-
-  final RxInt currentPage = 1.obs;
   final RxInt userBlogsCurrentPage = 1.obs;
+  final RxInt userBlogTotalPages = 1.obs;
 
-  List<Map<String, dynamic>> get currentPageUsers {
-    final startIndex = (currentPage.value - 1) * itemsPerPage;
-    final endIndex = startIndex + itemsPerPage;
+  final BlogService _service = BlogService();
+
+  Future<void> fetchAllUserBlogs() async {
+    try {
+      final List<BlogModel> blogs = [];
+
+      int page = 1;
+      while (true) {
+        final response = await _service.getBlogsByUser(
+          page: page,
+          limit: userBlogsPerPage,
+        );
+
+        if (response is Map && response.containsKey("blogs")) {
+          final List<BlogModel> pageBlogs = response["blogs"];
+          if (pageBlogs.isEmpty) break;
+
+          blogs.addAll(pageBlogs);
+
+          final int totalPages = response["totalPages"];
+          userBlogTotalPages.value = totalPages;
+
+          if (page >= totalPages) break;
+
+          page++;
+        } else {
+          break;
+        }
+      }
+
+      allUserBlogs.assignAll(blogs);
+      applyPagination();
+    } catch (e) {
+      print("Error fetching all blogs: $e");
+    }
+  }
+
+  void applyPagination() {
+    final startIndex = (userBlogsCurrentPage.value - 1) * userBlogsPerPage;
+    final endIndex = (startIndex + userBlogsPerPage > allUserBlogs.length)
+        ? allUserBlogs.length
+        : startIndex + userBlogsPerPage;
+
+    paginatedUserBlogs.value = allUserBlogs.sublist(startIndex, endIndex);
+  }
+
+  void changeUserBlogPage(int pageNumber) {
+    if (pageNumber > 0 && pageNumber <= userBlogTotalPages.value) {
+      userBlogsCurrentPage.value = pageNumber;
+      applyPagination();
+    }
+  }
+
+  void goToPreviousUserBlogPage() {
+    if (userBlogsCurrentPage.value > 1) {
+      userBlogsCurrentPage.value -= 1;
+      applyPagination();
+    }
+  }
+
+  void goToNextUserBlogPage() {
+    if (userBlogsCurrentPage.value < userBlogTotalPages.value) {
+      userBlogsCurrentPage.value += 1;
+      applyPagination();
+    }
+  }
+
+  bool get isUserBlogBackDisabled => userBlogsCurrentPage.value == 1;
+  bool get isUserBlogNextDisabled =>
+      userBlogsCurrentPage.value == userBlogTotalPages.value;
+
+  final RxList<BlogModel> allBlogs = <BlogModel>[].obs;
+  final RxList<BlogModel> paginatedBlogs = <BlogModel>[].obs;
+
+  final int blogsPerPage = 3;
+  final RxInt blogsCurrentPage = 1.obs;
+  final RxInt blogTotalPages = 1.obs;
+
+  Future<void> fetchAllBlogs() async {
+    try {
+      allBlogs.clear();
+      paginatedBlogs.clear();
+      final List<BlogModel> blogs = [];
+
+      int page = 1;
+      while (true) {
+        final response = await _service.getBlogsByAdmin(
+          page: page,
+          limit: blogsPerPage,
+        );
+
+        if (response is Map && response.containsKey("blogs")) {
+          final List<BlogModel> pageBlogs = response["blogs"];
+          if (pageBlogs.isEmpty) break;
+
+          blogs.addAll(pageBlogs);
+
+          final int totalPages = response["totalPages"];
+          blogTotalPages.value = totalPages;
+
+          if (page >= totalPages) break;
+
+          page++;
+        } else {
+          break;
+        }
+      }
+
+      allBlogs.assignAll(blogs);
+      applyPagination1();
+    } catch (e) {
+      print("Error fetching all blogs: $e");
+    }
+  }
+
+  void applyPagination1() {
+    final startIndex = (blogsCurrentPage.value - 1) * blogsPerPage;
+    final endIndex = (startIndex + blogsPerPage > allBlogs.length)
+        ? allBlogs.length
+        : startIndex + blogsPerPage;
+
+    paginatedBlogs.value = allBlogs.sublist(startIndex, endIndex);
+  }
+
+  void changeBlogPage(int pageNumber) {
+    if (pageNumber > 0 && pageNumber <= blogTotalPages.value) {
+      blogsCurrentPage.value = pageNumber;
+      applyPagination1();
+    }
+  }
+
+  void goToPreviousBlogPage() {
+    if (blogsCurrentPage.value > 1) {
+      blogsCurrentPage.value -= 1;
+      applyPagination1();
+    }
+  }
+
+  void goToNextBlogPage() {
+    if (blogsCurrentPage.value < blogTotalPages.value) {
+      blogsCurrentPage.value += 1;
+      applyPagination1();
+    }
+  }
+
+  bool get isBlogBackDisabled => blogsCurrentPage.value == 1;
+  bool get isBlogNextDisabled => blogsCurrentPage.value == blogTotalPages.value;
+
+  List<BlogModel> get currentPageUsers {
+    final startIndex = (blogsCurrentPage.value - 1) * blogsPerPage;
+    final endIndex = startIndex + blogsPerPage;
     return allBlogs.sublist(
       startIndex,
       endIndex > allBlogs.length ? allBlogs.length : endIndex,
     );
   }
 
-  List<Map<String, dynamic>> get userBlogsCurrentPageUsers {
+  List<BlogModel> get userBlogsCurrentPageUsers {
     final startIndex = (userBlogsCurrentPage.value - 1) * userBlogsPerPage;
     final endIndex = startIndex + userBlogsPerPage;
     return allUserBlogs.sublist(
@@ -104,51 +285,4 @@ class BlogController extends GetxController {
       endIndex > allUserBlogs.length ? allUserBlogs.length : endIndex,
     );
   }
-
-  int get totalPages => (allBlogs.length / itemsPerPage).ceil();
-  int get userBlogTotalPages => (allUserBlogs.length / userBlogsPerPage).ceil();
-
-  void changePage(int pageNumber) {
-    if (pageNumber > 0 && pageNumber <= totalPages) {
-      currentPage.value = pageNumber;
-    }
-  }
-
-  void userBlogChangePage(int pageNumber) {
-    if (pageNumber > 0 && pageNumber <= userBlogTotalPages) {
-      userBlogsCurrentPage.value = pageNumber;
-    }
-  }
-
-  void goToPreviousPage() {
-    if (currentPage.value > 1) {
-      currentPage.value -= 1;
-    }
-  }
-
-  void goToPreviousPage1() {
-    if (userBlogsCurrentPage.value > 1) {
-      userBlogsCurrentPage.value -= 1;
-    }
-  }
-
-  // Next button functionality
-  void goToNextPage() {
-    if (currentPage.value < totalPages) {
-      currentPage.value += 1;
-    }
-  }
-
-  void goToNextPage1() {
-    if (userBlogsCurrentPage.value < userBlogTotalPages) {
-      userBlogsCurrentPage.value += 1;
-    }
-  }
-
-  bool get isBackButtonDisabled => currentPage.value == 1;
-
-  bool get isBackButtonDisabled1 => userBlogsCurrentPage.value == 1;
-
-  bool get isNextButtonDisabled => currentPage.value == totalPages;
-  bool get isNextButtonDisabled1 => userBlogsCurrentPage.value == userBlogTotalPages;
 }

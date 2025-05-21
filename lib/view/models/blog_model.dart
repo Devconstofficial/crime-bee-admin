@@ -27,7 +27,8 @@ class BlogModel {
     updatedAt = json["updatedAt"] ?? updatedAt;
     coverImage = json["coverImage"] ?? coverImage;
   }
-
+  
+  
   @override
   String toString() {
     return 'BlogModel{blogId: $blogId, title: $title, category: $category, description: $description, blogStatus: $blogStatus, coverImage: $coverImage, views: $views, createdAt: $createdAt, updatedAt: $updatedAt, postedBy: $postedBy}';

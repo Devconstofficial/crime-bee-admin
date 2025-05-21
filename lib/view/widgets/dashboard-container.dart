@@ -1,3 +1,4 @@
+import 'package:crime_bee_admin/utils/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../utils/app_colors.dart';
@@ -9,7 +10,6 @@ class DashboardContainer extends StatefulWidget {
   double? width;
   String? title;
   String? totalNumber;
-  String? percent;
   Color? color;
 
   DashboardContainer(
@@ -17,7 +17,6 @@ class DashboardContainer extends StatefulWidget {
       this.width,
       this.height,
       this.title,
-      this.percent,
       this.totalNumber,
       this.color});
 
@@ -99,22 +98,16 @@ class _DashboardContainerState extends State<DashboardContainer> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _isRowHovered
-                            ? Row(
-                                children: [
-                                  Text(
-                                    widget.percent ?? '',
-                                    style: AppStyles.workSansTextStyle().copyWith(
-                                      fontSize: 12,
-                                      color: kWhiteColor,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 11),
-                                  SvgPicture.asset(
-                                    kArrowIcon,
-                                    height: 10,
-                                    width: 10,
-                                  ),
-                                ],
+                            ? SvgPicture.asset(
+                                widget.title == kActiveVigi
+                                    ? kClownIcon
+                                    : kSubscriptionIcon,
+                                height: 26,
+                                width: 26,
+                                colorFilter: const ColorFilter.mode(
+                                  kWhiteColor,
+                                  BlendMode.srcIn,
+                                ),
                               )
                             : Text(
                                 widget.totalNumber ?? '',
@@ -125,22 +118,16 @@ class _DashboardContainerState extends State<DashboardContainer> {
                                 ),
                               ),
                         !_isRowHovered
-                            ? Row(
-                                children: [
-                                  Text(
-                                    widget.percent ?? '',
-                                    style: AppStyles.workSansTextStyle().copyWith(
-                                      fontSize: 12,
-                                      color: kWhiteColor,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 11),
-                                  SvgPicture.asset(
-                                    kArrowIcon,
-                                    height: 10,
-                                    width: 10,
-                                  ),
-                                ],
+                            ? SvgPicture.asset(
+                                widget.title == kActiveVigi
+                                    ? kClownIcon
+                                    : kSubscriptionIcon,
+                                height: 26,
+                                width: 26,
+                                colorFilter: const ColorFilter.mode(
+                                  kWhiteColor,
+                                  BlendMode.srcIn,
+                                ),
                               )
                             : Text(
                                 widget.totalNumber ?? '',
