@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:crime_bee_admin/view/models/blog_model2.dart';
 import 'package:crime_bee_admin/web_services/web_urls.dart';
 
 import '../view/models/blog_model.dart';
@@ -174,7 +175,7 @@ class BlogService {
     log("updateBlogByAdmin==================> $responseModel");
 
     if (responseModel.statusCode >= 200 && responseModel.statusCode <= 230) {
-      return BlogModel.fromJson(responseModel.data["data"]["blog"]);
+      return BlogModel1.fromJson(responseModel.data["data"]["blog"]);
     }
 
     return {
@@ -182,21 +183,48 @@ class BlogService {
     };
   }
 
-  Future<dynamic> approveBlogByAdmin(String blogId) async {
+  Future<dynamic> statusBlogByAdmin({
+    required String blogId,
+    required String status,
+  }) async {
+    final Map<String, dynamic> body = {
+      "blogStatus": status,
+    };
+
     ResponseModel responseModel = await _client.customRequest(
-      'POST',
-      url: "${WebUrls.kApproveBlogByAdminUrl}/$blogId/approve",
+      'PUT',
+      url: "${WebUrls.kUpdateBlogByAdminUrl}/$blogId",
+      requestBody: body,
       isBearerHeaderRequired: true,
     );
 
-    log("approveBlogByAdmin==================> $responseModel");
+    log("updateBlogByAdmin==================> $responseModel");
 
     if (responseModel.statusCode >= 200 && responseModel.statusCode <= 230) {
-      return BlogModel.fromJson(responseModel.data["data"]["blog"]);
+      return BlogModel1.fromJson(responseModel.data["data"]["blog"]);
     }
 
     return {
       "error": responseModel.data["message"] ?? responseModel.statusDescription
     };
   }
+
+  Future<dynamic> deleteBlogByAdmin(String blogId) async {
+  ResponseModel responseModel = await _client.customRequest(
+    'DELETE',
+    url: "${WebUrls.kDeleteBlogByAdminUrl}/$blogId",
+    isBearerHeaderRequired: true,
+  );
+
+  log("deleteBlogByAdmin==================> $responseModel");
+
+  if (responseModel.statusCode >= 200 && responseModel.statusCode <= 230) {
+    return responseModel.data["message"] ?? "Blog deleted successfully";
+  }
+
+  return {
+    "error": responseModel.data["message"] ?? responseModel.statusDescription
+  };
+}
+
 }

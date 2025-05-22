@@ -25,6 +25,7 @@ class WebUrls extends _BaseUrl {
   static const String kCreateBlogByAdminUrl = '${_BaseUrl._kBaseUrl}/admin/blogs';
   static const String kUpdateBlogByAdminUrl = '${_BaseUrl._kBaseUrl}/admin/blogs';
   static const String kApproveBlogByAdminUrl = '${_BaseUrl._kBaseUrl}/admin/blogs';
+  static const String kDeleteBlogByAdminUrl = "${_BaseUrl._kBaseUrl}/admin/blogs";
 
 
 

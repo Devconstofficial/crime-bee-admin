@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:crime_bee_admin/view/models/blog_model.dart';
+import 'package:crime_bee_admin/view/models/blog_model2.dart';
 import 'package:crime_bee_admin/web_services/blog_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +15,7 @@ class BlogController extends GetxController {
   TextEditingController title = TextEditingController();
   TextEditingController desc = TextEditingController();
   var selectedBlogStatus = ''.obs;
+  var status = ''.obs;
   RxList notifications = [].obs;
   RxList activities = [].obs;
   var selectedFilters = <String>{}.obs;
@@ -54,38 +57,120 @@ class BlogController extends GetxController {
   }
 
   Future<void> updateBlogAsAdmin({
-  required String id,
-  required String title,
-  required String category,
-  required String description,
-  required String coverImage,
-}) async {
-  try {
-    final result = await _service.updateBlogByAdmin(
-      blogId: id,
-      title: title,
-      category: category,
-      description: description,
-      coverImage: coverImage,
-    );
+    required String id,
+    required String title,
+    required String category,
+    required String description,
+    required String coverImage,
+  }) async {
+    try {
+      final result = await _service.updateBlogByAdmin(
+        blogId: id,
+        title: title,
+        category: category,
+        description: description,
+        coverImage: coverImage,
+      );
 
-    if (result is BlogModel) {
-      print("Blog updated successfully: ${result.title}");
+      if (result is BlogModel1) {
+        print("Blog updated successfully: ${result.title}");
 
-      final index = allBlogs.indexWhere((blog) => blog.blogId == id);
-      if (index != -1) {
-        allBlogs[index] = result;
-        allBlogs.refresh();
+        fetchAllBlogs();
+      } else if (result is Map && result.containsKey("error")) {
+        print("Failed to update blog: ${result['error']}");
       }
-
-    } else if (result is Map && result.containsKey("error")) {
-      print("Failed to update blog: ${result['error']}");
+    } catch (e) {
+      print("Exception while updating blog: $e");
     }
-  } catch (e) {
-    print("Exception while updating blog: $e");
   }
-}
 
+  Future<void> approveRejectBlogAsAdmin({
+    required String id,
+    required String status,
+  }) async {
+    try {
+      final result =
+          await _service.statusBlogByAdmin(blogId: id, status: status);
+
+      if (result is BlogModel1) {
+        print("Blog updated successfully: ${result.title}");
+
+        fetchAllUserBlogs();
+      } else if (result is Map && result.containsKey("error")) {
+        print("Failed to update blog: ${result['error']}");
+      }
+    } catch (e) {
+      print("Exception while updating blog: $e");
+    }
+  }
+
+  Future<void> deleteBlog(String blogId) async {
+    try {
+      final result = await _service.deleteBlogByAdmin(blogId);
+
+      if (result is String) {
+        Get.back();
+        Get.snackbar('Success', result,
+            backgroundColor: Colors.green, colorText: kWhiteColor);
+        await fetchAllUserBlogs();
+      } else if (result is Map && result.containsKey('error')) {
+        Get.snackbar(
+          'Error',
+          result['error'].toString(),
+          backgroundColor: kPrimaryColor,
+          colorText: kWhiteColor,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          'Unexpected error occurred',
+          backgroundColor: kPrimaryColor,
+          colorText: kWhiteColor,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An error occurred: $e',
+        backgroundColor: kPrimaryColor,
+        colorText: kWhiteColor,
+      );
+    }
+  }
+
+  Future<void> deleteBlog1(String blogId) async {
+    try {
+      final result = await _service.deleteBlogByAdmin(blogId);
+
+      if (result is String) {
+        Get.back();
+        Get.snackbar('Success', result,
+            backgroundColor: Colors.green, colorText: kWhiteColor);
+        await fetchAllBlogs();
+      } else if (result is Map && result.containsKey('error')) {
+        Get.snackbar(
+          'Error',
+          result['error'].toString(),
+          backgroundColor: kPrimaryColor,
+          colorText: kWhiteColor,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          'Unexpected error occurred',
+          backgroundColor: kPrimaryColor,
+          colorText: kWhiteColor,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An error occurred: $e',
+        backgroundColor: kPrimaryColor,
+        colorText: kWhiteColor,
+      );
+    }
+  }
 
   void toggleFilter(String filter) {
     if (selectedFilters.contains(filter)) {
@@ -119,12 +204,15 @@ class BlogController extends GetxController {
   final int userBlogsPerPage = 3;
   final RxInt userBlogsCurrentPage = 1.obs;
   final RxInt userBlogTotalPages = 1.obs;
-
+  var isLoading1 = false.obs;
   final BlogService _service = BlogService();
 
   Future<void> fetchAllUserBlogs() async {
     try {
+      isLoading1(true);
       final List<BlogModel> blogs = [];
+      allUserBlogs.clear();
+      paginatedUserBlogs.clear();
 
       int page = 1;
       while (true) {
@@ -146,13 +234,16 @@ class BlogController extends GetxController {
 
           page++;
         } else {
+          isLoading1(false);
           break;
         }
       }
 
       allUserBlogs.assignAll(blogs);
       applyPagination();
+      isLoading1(false);
     } catch (e) {
+      isLoading1(false);
       print("Error fetching all blogs: $e");
     }
   }
@@ -193,6 +284,8 @@ class BlogController extends GetxController {
 
   final RxList<BlogModel> allBlogs = <BlogModel>[].obs;
   final RxList<BlogModel> paginatedBlogs = <BlogModel>[].obs;
+  final RxList<BlogModel> filteredBlogs = <BlogModel>[].obs;
+  var isLoading = false.obs;
 
   final int blogsPerPage = 3;
   final RxInt blogsCurrentPage = 1.obs;
@@ -200,6 +293,7 @@ class BlogController extends GetxController {
 
   Future<void> fetchAllBlogs() async {
     try {
+      isLoading(true);
       allBlogs.clear();
       paginatedBlogs.clear();
       final List<BlogModel> blogs = [];
@@ -224,24 +318,32 @@ class BlogController extends GetxController {
 
           page++;
         } else {
+          isLoading(false);
           break;
         }
       }
 
       allBlogs.assignAll(blogs);
       applyPagination1();
+      isLoading(false);
     } catch (e) {
+      isLoading(false);
       print("Error fetching all blogs: $e");
     }
   }
 
   void applyPagination1() {
+    final List<BlogModel> baseList =
+        filteredBlogs.isNotEmpty || selectedFilters.isNotEmpty
+            ? filteredBlogs
+            : allBlogs;
+
     final startIndex = (blogsCurrentPage.value - 1) * blogsPerPage;
-    final endIndex = (startIndex + blogsPerPage > allBlogs.length)
-        ? allBlogs.length
+    final endIndex = (startIndex + blogsPerPage > baseList.length)
+        ? baseList.length
         : startIndex + blogsPerPage;
 
-    paginatedBlogs.value = allBlogs.sublist(startIndex, endIndex);
+    paginatedBlogs.value = baseList.sublist(startIndex, endIndex);
   }
 
   void changeBlogPage(int pageNumber) {
@@ -250,6 +352,23 @@ class BlogController extends GetxController {
       applyPagination1();
     }
   }
+
+  void applyCategoryFilters() {
+  if (selectedFilters.isEmpty) {
+    filteredBlogs.assignAll(allBlogs);
+  } else {
+    final List<BlogModel> filtered = allBlogs.where((blog) {
+      return selectedFilters.contains(blog.category); 
+    }).toList();
+
+    filteredBlogs.assignAll(filtered);
+  }
+
+  blogsCurrentPage.value = 1;
+  blogTotalPages.value = (filteredBlogs.length / blogsPerPage).ceil().clamp(1, double.infinity).toInt();
+  applyPagination1();
+}
+
 
   void goToPreviousBlogPage() {
     if (blogsCurrentPage.value > 1) {
@@ -285,4 +404,13 @@ class BlogController extends GetxController {
       endIndex > allUserBlogs.length ? allUserBlogs.length : endIndex,
     );
   }
+
+  void resetCategoryFilters() {
+  selectedFilters.clear(); 
+  filteredBlogs.clear(); 
+  blogsCurrentPage.value = 1;
+  blogTotalPages.value = (allBlogs.length / blogsPerPage).ceil().clamp(1, double.infinity).toInt();
+  applyPagination1(); 
+}
+
 }

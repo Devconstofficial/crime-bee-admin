@@ -246,8 +246,12 @@ class BlogScreen extends GetView<BlogController> {
                       text: "Add Blog",
                       height: 40,
                       onTap: () async {
-                        if(controller.title.text.isEmpty || controller.desc.text.isEmpty || controller.selectedBlogType.value == ''){
-                          Get.snackbar('Error', "All fields are required", backgroundColor: kPrimaryColor, colorText: kWhiteColor);
+                        if (controller.title.text.isEmpty ||
+                            controller.desc.text.isEmpty ||
+                            controller.selectedBlogType.value == '') {
+                          Get.snackbar('Error', "All fields are required",
+                              backgroundColor: kPrimaryColor,
+                              colorText: kWhiteColor);
                           return;
                         }
                         await controller.createBlogAsAdmin(
@@ -263,8 +267,9 @@ class BlogScreen extends GetView<BlogController> {
                         controller.title.clear();
                         controller.desc.clear();
                         Get.close(1);
-                        Get.snackbar('Success', "Blog Added successfully!!", backgroundColor: Colors.green, colorText: kWhiteColor);
-                        
+                        Get.snackbar('Success', "Blog Added successfully!!",
+                            backgroundColor: Colors.green,
+                            colorText: kWhiteColor);
                       },
                       width: 90,
                       color: kPrimaryColor,
@@ -508,8 +513,12 @@ class BlogScreen extends GetView<BlogController> {
                       text: "Update Blog",
                       height: 40,
                       onTap: () async {
-                        if(controller.title.text.isEmpty || controller.desc.text.isEmpty || controller.selectedBlogType.value == ''){
-                          Get.snackbar('Error', "All fields are required", backgroundColor: kPrimaryColor, colorText: kWhiteColor);
+                        if (controller.title.text.isEmpty ||
+                            controller.desc.text.isEmpty ||
+                            controller.selectedBlogType.value == '') {
+                          Get.snackbar('Error', "All fields are required",
+                              backgroundColor: kPrimaryColor,
+                              colorText: kWhiteColor);
                           return;
                         }
                         await controller.updateBlogAsAdmin(
@@ -526,8 +535,9 @@ class BlogScreen extends GetView<BlogController> {
                         controller.title.clear();
                         controller.desc.clear();
                         Get.close(1);
-                        Get.snackbar('Success', "Blog Updated successfully!!", backgroundColor: Colors.green, colorText: kWhiteColor);
-                        
+                        Get.snackbar('Success', "Blog Updated successfully!!",
+                            backgroundColor: Colors.green,
+                            colorText: kWhiteColor);
                       },
                       width: 90,
                       color: kPrimaryColor,
@@ -543,9 +553,7 @@ class BlogScreen extends GetView<BlogController> {
     );
   }
 
-
-
-  Widget statusUpdateDialogue(BuildContext context) {
+  Widget statusUpdateDialogue(BuildContext context, String id) {
     double width = MediaQuery.of(context).size.width;
 
     return Dialog(
@@ -615,7 +623,7 @@ class BlogScreen extends GetView<BlogController> {
                             size: 25, color: kBlackColor.withOpacity(0.4)),
                       ),
                       underline: const SizedBox.shrink(),
-                      items: ['Approve', 'Reject']
+                      items: ['Approve', 'Reject', 'Pending']
                           .map((String crime) => DropdownMenuItem<String>(
                                 value: crime,
                                 child: Padding(
@@ -631,6 +639,15 @@ class BlogScreen extends GetView<BlogController> {
                           .toList(),
                       onChanged: (String? newValue) {
                         controller.selectedBlogStatus.value = newValue!;
+                        if (controller.selectedBlogStatus.value == 'Approve') {
+                          controller.status.value = 'approved';
+                        }
+                        if (controller.selectedBlogStatus.value == 'Reject') {
+                          controller.status.value = 'rejected';
+                        }
+                        if (controller.selectedBlogStatus.value == 'Pending') {
+                          controller.status.value = 'pending';
+                        }
                       },
                     );
                   }),
@@ -656,7 +673,25 @@ class BlogScreen extends GetView<BlogController> {
                     CustomButton(
                       text: "Update Now",
                       height: 40,
-                      onTap: () {},
+                      onTap: () async {
+                        if (controller.selectedBlogStatus.value == '') {
+                          Get.snackbar('Error', "Please select the status",
+                              backgroundColor: kPrimaryColor,
+                              colorText: kWhiteColor);
+                          return;
+                        }
+                        await controller.approveRejectBlogAsAdmin(
+                          id: id,
+                          status: controller.status.value,
+                        );
+                        controller.selectedBlogStatus.value = '';
+                        controller.status.value = '';
+
+                        Get.close(1);
+                        Get.snackbar('Success', "Blog Updated successfully!!",
+                            backgroundColor: Colors.green,
+                            colorText: kWhiteColor);
+                      },
                       width: 110,
                       color: kPrimaryColor,
                       fontSize: 14.sp,
@@ -732,22 +767,22 @@ class BlogScreen extends GetView<BlogController> {
                           Obx(
                             () {
                               return FilterButton(
-                                text: "Ai",
+                                text: "Health",
                                 height: 34,
                                 onTap: () {
-                                  controller.toggleFilter("Ai");
+                                  controller.toggleFilter("Health");
                                 },
-                                width: 64,
+                                width: 74,
                                 borderColor:
-                                    controller.selectedFilters.contains("Ai")
+                                    controller.selectedFilters.contains("Health")
                                         ? kWhiteColor
                                         : kActionsButtonColor,
-                                color: controller.selectedFilters.contains("Ai")
+                                color: controller.selectedFilters.contains("Health")
                                     ? kPrimaryColor
                                     : kWhiteColor,
                                 fontSize: 14,
                                 textColor:
-                                    controller.selectedFilters.contains("Ai")
+                                    controller.selectedFilters.contains("Health")
                                         ? kWhiteColor
                                         : kBlackColor,
                               );
@@ -829,6 +864,7 @@ class BlogScreen extends GetView<BlogController> {
                             height: 40,
                             onTap: () {
                               Get.back();
+                              controller.applyCategoryFilters();
                             },
                             width: 110,
                             color: kPrimaryColor,
@@ -879,78 +915,78 @@ class BlogScreen extends GetView<BlogController> {
                                   fontSize: 32.sp, fontWeight: FontWeight.w600),
                             ),
                             const Spacer(),
-                            Container(
-                              height: 41,
-                              width: width / 4.5,
-                              decoration: BoxDecoration(
-                                  color: kWhiteColor,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: kFieldBorderColor)),
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 3),
-                                      child: SizedBox(
-                                        width: width / 5.5,
-                                        child: TextField(
-                                          style: AppStyles.workSansTextStyle()
-                                              .copyWith(
-                                                  fontSize: 14.sp,
-                                                  fontWeight: FontWeight.w400),
-                                          decoration: InputDecoration(
-                                              hintText: 'Search',
-                                              fillColor: kWhiteColor,
-                                              hintStyle:
-                                                  AppStyles.workSansTextStyle()
-                                                      .copyWith(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color: ksuffixColor
-                                                              .withOpacity(
-                                                                  0.2)),
-                                              // contentPadding: const EdgeInsets.only(top: 9),
-                                              prefixIcon: Icon(
-                                                Icons.search_sharp,
-                                                size: 16,
-                                                color: ksuffixColor
-                                                    .withOpacity(0.2),
-                                              ),
-                                              focusColor: kWhiteColor,
-                                              hoverColor: kWhiteColor,
-                                              focusedBorder:
-                                                  const UnderlineInputBorder(
-                                                      borderSide:
-                                                          BorderSide.none),
-                                              enabledBorder:
-                                                  const UnderlineInputBorder(
-                                                      borderSide:
-                                                          BorderSide.none),
-                                              border:
-                                                  const UnderlineInputBorder(
-                                                      borderSide:
-                                                          BorderSide.none)),
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      '⌘/',
-                                      style: AppStyles.interTextStyle()
-                                          .copyWith(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                              color: ksuffixColor
-                                                  .withOpacity(0.2)),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 20),
+                            // Container(
+                            //   height: 41,
+                            //   width: width / 4.5,
+                            //   decoration: BoxDecoration(
+                            //       color: kWhiteColor,
+                            //       borderRadius: BorderRadius.circular(8),
+                            //       border: Border.all(color: kFieldBorderColor)),
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.only(right: 8),
+                            //     child: Row(
+                            //       mainAxisAlignment:
+                            //           MainAxisAlignment.spaceBetween,
+                            //       children: [
+                            //         Padding(
+                            //           padding: const EdgeInsets.only(left: 3),
+                            //           child: SizedBox(
+                            //             width: width / 5.5,
+                            //             child: TextField(
+                            //               style: AppStyles.workSansTextStyle()
+                            //                   .copyWith(
+                            //                       fontSize: 14.sp,
+                            //                       fontWeight: FontWeight.w400),
+                            //               decoration: InputDecoration(
+                            //                   hintText: 'Search',
+                            //                   fillColor: kWhiteColor,
+                            //                   hintStyle:
+                            //                       AppStyles.workSansTextStyle()
+                            //                           .copyWith(
+                            //                               fontSize: 14,
+                            //                               fontWeight:
+                            //                                   FontWeight.w400,
+                            //                               color: ksuffixColor
+                            //                                   .withOpacity(
+                            //                                       0.2)),
+                            //                   // contentPadding: const EdgeInsets.only(top: 9),
+                            //                   prefixIcon: Icon(
+                            //                     Icons.search_sharp,
+                            //                     size: 16,
+                            //                     color: ksuffixColor
+                            //                         .withOpacity(0.2),
+                            //                   ),
+                            //                   focusColor: kWhiteColor,
+                            //                   hoverColor: kWhiteColor,
+                            //                   focusedBorder:
+                            //                       const UnderlineInputBorder(
+                            //                           borderSide:
+                            //                               BorderSide.none),
+                            //                   enabledBorder:
+                            //                       const UnderlineInputBorder(
+                            //                           borderSide:
+                            //                               BorderSide.none),
+                            //                   border:
+                            //                       const UnderlineInputBorder(
+                            //                           borderSide:
+                            //                               BorderSide.none)),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //         Text(
+                            //           '⌘/',
+                            //           style: AppStyles.interTextStyle()
+                            //               .copyWith(
+                            //                   fontSize: 14,
+                            //                   fontWeight: FontWeight.w400,
+                            //                   color: ksuffixColor
+                            //                       .withOpacity(0.2)),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
+                            // const SizedBox(width: 20),
                             MouseRegion(
                               cursor: SystemMouseCursors.click,
                               child: GestureDetector(
@@ -1030,6 +1066,28 @@ class BlogScreen extends GetView<BlogController> {
                                             size: 24,
                                             color: kPrimaryColor,
                                           )),
+                                          Container(
+                                  width: 1,
+                                  color: kLightGreyColor,
+                                ),
+                                const Icon(
+                                  Icons.refresh,
+                                  color: kPrimaryColor,
+                                  size: 18,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    controller.resetCategoryFilters();
+                                  },
+                                  child: Text(
+                                    "Reset Filter",
+                                    style: AppStyles.workSansTextStyle()
+                                        .copyWith(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: kPrimaryColor,),
+                                  ),
+                                ),
                                     ],
                                   ),
                                 ),
@@ -1053,137 +1111,152 @@ class BlogScreen extends GetView<BlogController> {
                             const SizedBox(
                               height: 32,
                             ),
-                            Container(
-                              width: width,
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(14),
-                                  topRight: Radius.circular(14),
+                            Obx(() {
+                              if (controller.isLoading.value) {
+                                return SizedBox(
+                                  height: 500.h,
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                              if (controller.paginatedBlogs.isEmpty) {
+                                return const Center(
+                                    child: Text("No blogs found"));
+                              }
+                              return Container(
+                                width: width,
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(14),
+                                    topRight: Radius.circular(14),
+                                  ),
+                                  border: Border.all(
+                                      color: kTableBorderColor, width: 1),
                                 ),
-                                border: Border.all(
-                                    color: kTableBorderColor, width: 1),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    height: 49,
-                                    decoration: const BoxDecoration(
-                                      color: kPrimaryColor,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(14),
-                                        topRight: Radius.circular(14),
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      height: 49,
+                                      decoration: const BoxDecoration(
+                                        color: kPrimaryColor,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(14),
+                                          topRight: Radius.circular(14),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: width,
-                                    child: DataTable(
-                                      headingRowHeight: 49,
-                                      columns: [
-                                        DataColumn(
-                                          label: Flexible(
-                                            child: Text(
-                                              "Title",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
-                                                      .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                    SizedBox(
+                                      width: width,
+                                      child: DataTable(
+                                        headingRowHeight: 49,
+                                        columns: [
+                                          DataColumn(
+                                            label: Flexible(
+                                              child: Text(
+                                                "Title",
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: AppStyles
+                                                        .workSansTextStyle()
+                                                    .copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14.sp,
+                                                  color: kWhiteColor,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        DataColumn(
-                                          headingRowAlignment:
-                                              MainAxisAlignment.center,
-                                          label: Flexible(
-                                            child: Text(
-                                              "Views",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
-                                                      .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                          DataColumn(
+                                            headingRowAlignment:
+                                                MainAxisAlignment.center,
+                                            label: Flexible(
+                                              child: Text(
+                                                "Views",
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: AppStyles
+                                                        .workSansTextStyle()
+                                                    .copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14.sp,
+                                                  color: kWhiteColor,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        DataColumn(
-                                          headingRowAlignment:
-                                              MainAxisAlignment.center,
-                                          label: Flexible(
-                                            child: Text(
-                                              "Category",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
-                                                      .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                          DataColumn(
+                                            headingRowAlignment:
+                                                MainAxisAlignment.center,
+                                            label: Flexible(
+                                              child: Text(
+                                                "Category",
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: AppStyles
+                                                        .workSansTextStyle()
+                                                    .copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14.sp,
+                                                  color: kWhiteColor,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        DataColumn(
-                                          headingRowAlignment:
-                                              MainAxisAlignment.center,
-                                          label: Flexible(
-                                            child: Text(
-                                              "Date",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
-                                                      .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                          DataColumn(
+                                            headingRowAlignment:
+                                                MainAxisAlignment.center,
+                                            label: Flexible(
+                                              child: Text(
+                                                "Date",
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: AppStyles
+                                                        .workSansTextStyle()
+                                                    .copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14.sp,
+                                                  color: kWhiteColor,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        DataColumn(
-                                          headingRowAlignment:
-                                              MainAxisAlignment.center,
-                                          label: Flexible(
-                                            child: Text(
-                                              "Actions",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
-                                                      .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                          DataColumn(
+                                            headingRowAlignment:
+                                                MainAxisAlignment.center,
+                                            label: Flexible(
+                                              child: Text(
+                                                "Actions",
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: AppStyles
+                                                        .workSansTextStyle()
+                                                    .copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14.sp,
+                                                  color: kWhiteColor,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                      rows: controller.currentPageUsers
-                                          .map((user) => _buildDataRow(
-                                            user,
-                                              user.title,
-                                              controller.formatDate(user.updatedAt),
-                                              user.category,
-                                              "${user.views} Views",
-                                              context))
-                                          .toList(),
-                                      dataRowMaxHeight: 65,
+                                        ],
+                                        rows: controller.paginatedBlogs
+                                            .map((user) => _buildDataRow(
+                                                user,
+                                                user.title,
+                                                controller
+                                                    .formatDate(user.updatedAt),
+                                                user.category,
+                                                "${user.views} Views",
+                                                context))
+                                            .toList(),
+                                        dataRowMaxHeight: 65,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                  ],
+                                ),
+                              );
+                            }),
                             const SizedBox(
                               height: 51,
                             ),
@@ -1209,10 +1282,9 @@ class BlogScreen extends GetView<BlogController> {
                                       children: [
                                         Icon(Icons.arrow_back_ios_new_outlined,
                                             size: 12,
-                                            color:
-                                                controller.isBlogBackDisabled
-                                                    ? kBlackColor
-                                                    : kWhiteColor),
+                                            color: controller.isBlogBackDisabled
+                                                ? kBlackColor
+                                                : kWhiteColor),
                                         const SizedBox(
                                           width: 4,
                                         ),
@@ -1221,10 +1293,9 @@ class BlogScreen extends GetView<BlogController> {
                                           style: AppStyles.interTextStyle()
                                               .copyWith(
                                             fontSize: 12,
-                                            color:
-                                                controller.isBlogNextDisabled
-                                                    ? kWhiteColor
-                                                    : kBlackColor,
+                                            color: controller.isBlogNextDisabled
+                                                ? kWhiteColor
+                                                : kBlackColor,
                                           ),
                                         ),
                                       ],
@@ -1297,10 +1368,9 @@ class BlogScreen extends GetView<BlogController> {
                                           style: AppStyles.interTextStyle()
                                               .copyWith(
                                             fontSize: 12,
-                                            color:
-                                                controller.isBlogNextDisabled
-                                                    ? kBlackColor
-                                                    : kWhiteColor,
+                                            color: controller.isBlogNextDisabled
+                                                ? kBlackColor
+                                                : kWhiteColor,
                                           ),
                                         ),
                                         const SizedBox(
@@ -1308,10 +1378,9 @@ class BlogScreen extends GetView<BlogController> {
                                         ),
                                         Icon(Icons.arrow_forward_ios_outlined,
                                             size: 12,
-                                            color:
-                                                controller.isBlogNextDisabled
-                                                    ? kBlackColor
-                                                    : kWhiteColor),
+                                            color: controller.isBlogNextDisabled
+                                                ? kBlackColor
+                                                : kWhiteColor),
                                       ],
                                     ),
                                   ),
@@ -1329,149 +1398,164 @@ class BlogScreen extends GetView<BlogController> {
                             const SizedBox(
                               height: 32,
                             ),
-                            Container(
-                              width: width,
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(14),
-                                  topRight: Radius.circular(14),
+                            Obx(() {
+                              if (controller.isLoading1.value) {
+                                return SizedBox(
+                                  height: 500.h,
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                              return Container(
+                                width: width,
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(14),
+                                    topRight: Radius.circular(14),
+                                  ),
+                                  border: Border.all(
+                                      color: kTableBorderColor, width: 1),
                                 ),
-                                border: Border.all(
-                                    color: kTableBorderColor, width: 1),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    height: 49,
-                                    decoration: const BoxDecoration(
-                                      color: kPrimaryColor,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(14),
-                                        topRight: Radius.circular(14),
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      height: 49,
+                                      decoration: const BoxDecoration(
+                                        color: kPrimaryColor,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(14),
+                                          topRight: Radius.circular(14),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: width,
-                                    child: DataTable(
-                                      headingRowHeight: 49,
-                                      columns: [
-                                        DataColumn(
-                                          label: Flexible(
-                                            child: Text(
-                                              "Title",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
-                                                      .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                    SizedBox(
+                                      width: width,
+                                      child: DataTable(
+                                        headingRowHeight: 49,
+                                        columns: [
+                                          DataColumn(
+                                            label: Flexible(
+                                              child: Text(
+                                                "Title",
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: AppStyles
+                                                        .workSansTextStyle()
+                                                    .copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14.sp,
+                                                  color: kWhiteColor,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        DataColumn(
-                                          headingRowAlignment:
-                                              MainAxisAlignment.center,
-                                          label: Flexible(
-                                            child: Text(
-                                              "Submission Date",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
-                                                      .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                          DataColumn(
+                                            headingRowAlignment:
+                                                MainAxisAlignment.center,
+                                            label: Flexible(
+                                              child: Text(
+                                                "Submission Date",
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: AppStyles
+                                                        .workSansTextStyle()
+                                                    .copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14.sp,
+                                                  color: kWhiteColor,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        DataColumn(
-                                          headingRowAlignment:
-                                              MainAxisAlignment.center,
-                                          label: Flexible(
-                                            child: Text(
-                                              "Submitted By",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
-                                                      .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                          DataColumn(
+                                            headingRowAlignment:
+                                                MainAxisAlignment.center,
+                                            label: Flexible(
+                                              child: Text(
+                                                "Submitted By",
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: AppStyles
+                                                        .workSansTextStyle()
+                                                    .copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14.sp,
+                                                  color: kWhiteColor,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        DataColumn(
-                                          headingRowAlignment:
-                                              MainAxisAlignment.center,
-                                          label: Flexible(
-                                            child: Text(
-                                              "Status",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
-                                                      .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                          DataColumn(
+                                            headingRowAlignment:
+                                                MainAxisAlignment.center,
+                                            label: Flexible(
+                                              child: Text(
+                                                "Status",
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: AppStyles
+                                                        .workSansTextStyle()
+                                                    .copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14.sp,
+                                                  color: kWhiteColor,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        DataColumn(
-                                          headingRowAlignment:
-                                              MainAxisAlignment.center,
-                                          label: Flexible(
-                                            child: Text(
-                                              "Actions",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
-                                                      .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                          DataColumn(
+                                            headingRowAlignment:
+                                                MainAxisAlignment.center,
+                                            label: Flexible(
+                                              child: Text(
+                                                "Actions",
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: AppStyles
+                                                        .workSansTextStyle()
+                                                    .copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14.sp,
+                                                  color: kWhiteColor,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                      rows: controller.userBlogsCurrentPageUsers
-                                          .map((user) => _buildBlogDataRow(
-                                              user.title,
-                                              controller
-                                                  .formatDate(user.updatedAt),
-                                              user.postedBy.name ?? 'NA',
-                                              user.blogStatus,
-                                              user.blogStatus == 'approved'
-                                                  ? kLightBlue.withOpacity(0.2)
-                                                  : user.blogStatus == 'pending'
-                                                      ? kPrimaryColor
-                                                          .withOpacity(0.2)
-                                                      : kBrownColor
-                                                          .withOpacity(0.2),
-                                              user.blogStatus == 'approved'
-                                                  ? kLightBlue
-                                                  : user.blogStatus == 'pending'
-                                                      ? kPrimaryColor
-                                                      : kBrownColor,
-                                              context))
-                                          .toList(),
-                                      dataRowMaxHeight: 65,
+                                        ],
+                                        rows: controller
+                                            .userBlogsCurrentPageUsers
+                                            .map((user) => _buildBlogDataRow(
+                                                user.blogId,
+                                                user.title,
+                                                controller
+                                                    .formatDate(user.updatedAt),
+                                                user.postedBy.name ?? 'NA',
+                                                user.blogStatus,
+                                                user.blogStatus == 'approved'
+                                                    ? kLightBlue
+                                                        .withOpacity(0.2)
+                                                    : user.blogStatus ==
+                                                            'pending'
+                                                        ? kPrimaryColor
+                                                            .withOpacity(0.2)
+                                                        : kBrownColor
+                                                            .withOpacity(0.2),
+                                                user.blogStatus == 'approved'
+                                                    ? kLightBlue
+                                                    : user.blogStatus ==
+                                                            'pending'
+                                                        ? kPrimaryColor
+                                                        : kBrownColor,
+                                                context))
+                                            .toList(),
+                                        dataRowMaxHeight: 65,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                  ],
+                                ),
+                              );
+                            }),
                             const SizedBox(
                               height: 51,
                             ),
@@ -1629,8 +1713,8 @@ class BlogScreen extends GetView<BlogController> {
     ));
   }
 
-  DataRow _buildDataRow( BlogModel blog,
-      String title, String views, String category, String dateTime, context) {
+  DataRow _buildDataRow(BlogModel blog, String title, String views,
+      String category, String dateTime, context) {
     double width = MediaQuery.of(context).size.width;
 
     return DataRow(
@@ -1675,7 +1759,7 @@ class BlogScreen extends GetView<BlogController> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return editBlogDialogue(context,blog);
+                            return editBlogDialogue(context, blog);
                           },
                         );
                       },
@@ -1695,7 +1779,9 @@ class BlogScreen extends GetView<BlogController> {
                           context: context,
                           builder: (BuildContext context) {
                             return DeleteDialog(
-                              onDelete: () {},
+                              onDelete: () async {
+                                await controller.deleteBlog1(blog.blogId);
+                              },
                             );
                           },
                         );
@@ -1717,6 +1803,7 @@ class BlogScreen extends GetView<BlogController> {
   }
 
   DataRow _buildBlogDataRow(
+      String id,
       String title,
       String submissionDate,
       String submittedBy,
@@ -1787,7 +1874,7 @@ class BlogScreen extends GetView<BlogController> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return statusUpdateDialogue(context);
+                            return statusUpdateDialogue(context, id);
                           },
                         );
                       },
@@ -1807,7 +1894,9 @@ class BlogScreen extends GetView<BlogController> {
                           context: context,
                           builder: (BuildContext context) {
                             return DeleteDialog(
-                              onDelete: () {},
+                              onDelete: () async {
+                                await controller.deleteBlog(id);
+                              },
                             );
                           },
                         );
