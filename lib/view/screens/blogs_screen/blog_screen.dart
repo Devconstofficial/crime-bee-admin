@@ -146,7 +146,7 @@ class BlogScreen extends GetView<BlogController> {
                 Obx(
                   () {
                     return GestureDetector(
-                      child: controller.selectedImage.value == null
+                      child: controller.selectedImage.value == ''
                           ? DottedBorder(
                               color: kBackGroundColor,
                               strokeWidth: 5,
@@ -176,16 +176,18 @@ class BlogScreen extends GetView<BlogController> {
                                                 fontWeight: FontWeight.w400,
                                                 color: const Color(0xff858D9D)),
                                       ),
-                                      CustomButton(
-                                        text: "Add Image",
-                                        height: 40,
-                                        onTap: () {
-                                          controller.pickImage();
-                                        },
-                                        width: 100,
-                                        color: kBackGroundColor,
-                                        borderColor: kBackGroundColor,
-                                        textColor: kBlackColor,
+                                      Obx(
+                                        ()=> controller.isUploading.value ? const Center(child: CircularProgressIndicator(),) : CustomButton(
+                                          text: "Add Image",
+                                          height: 40,
+                                          onTap: () {
+                                            controller.pickImage();
+                                          },
+                                          width: 100,
+                                          color: kBackGroundColor,
+                                          borderColor: kBackGroundColor,
+                                          textColor: kBlackColor,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -212,8 +214,8 @@ class BlogScreen extends GetView<BlogController> {
                                             color: kFieldBorderColor)),
                                     child: ClipRRect(
                                       borderRadius: AppStyles.customBorder8,
-                                      child: Image.memory(
-                                        controller.selectedImage.value!,
+                                      child: Image.network(
+                                        controller.selectedImage.value,
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -234,7 +236,11 @@ class BlogScreen extends GetView<BlogController> {
                       text: "Cancel",
                       height: 40,
                       onTap: () {
-                        Get.back();
+                        controller.selectedImage.value = '';
+                        controller.selectedBlogType.value = '';
+                        controller.title.clear();
+                        controller.desc.clear();
+                        Get.close(1);
                       },
                       width: 75,
                       textColor: kBlackColor,
@@ -246,9 +252,15 @@ class BlogScreen extends GetView<BlogController> {
                       text: "Add Blog",
                       height: 40,
                       onTap: () async {
+                        if(controller.isUploading.value){
+                          Get.snackbar('Error', "Please wait image is uploading",
+                              backgroundColor: kPrimaryColor,
+                              colorText: kWhiteColor);
+                          return;
+                        }
                         if (controller.title.text.isEmpty ||
                             controller.desc.text.isEmpty ||
-                            controller.selectedBlogType.value == '') {
+                            controller.selectedBlogType.value == '' || controller.selectedImage.value == '') {
                           Get.snackbar('Error', "All fields are required",
                               backgroundColor: kPrimaryColor,
                               colorText: kWhiteColor);
@@ -259,10 +271,10 @@ class BlogScreen extends GetView<BlogController> {
                           category: controller.selectedBlogType.value,
                           description: controller.desc.text,
                           coverImage:
-                              "https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg",
+                              controller.selectedImage.value,
                         );
 
-                        controller.selectedImage.value = null;
+                        controller.selectedImage.value = '';
                         controller.selectedBlogType.value = '';
                         controller.title.clear();
                         controller.desc.clear();
@@ -290,7 +302,7 @@ class BlogScreen extends GetView<BlogController> {
     controller.title.text = blog.title;
     controller.desc.text = blog.description;
     controller.selectedBlogType.value = blog.category;
-    // controller.selectedImage.value = blog.coverImage as Uint8List?;
+    controller.selectedImage.value = blog.coverImage;
 
     return Dialog(
       backgroundColor: kWhiteColor,
@@ -413,7 +425,7 @@ class BlogScreen extends GetView<BlogController> {
                 Obx(
                   () {
                     return GestureDetector(
-                      child: controller.selectedImage.value == null
+                      child: controller.selectedImage.value == ''
                           ? DottedBorder(
                               color: kBackGroundColor,
                               strokeWidth: 5,
@@ -430,6 +442,7 @@ class BlogScreen extends GetView<BlogController> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
+
                                       SvgPicture.asset(
                                         kGalleryIcon,
                                         height: 16,
@@ -443,16 +456,18 @@ class BlogScreen extends GetView<BlogController> {
                                                 fontWeight: FontWeight.w400,
                                                 color: const Color(0xff858D9D)),
                                       ),
-                                      CustomButton(
-                                        text: "Add Image",
-                                        height: 40,
-                                        onTap: () {
-                                          controller.pickImage();
-                                        },
-                                        width: 100,
-                                        color: kBackGroundColor,
-                                        borderColor: kBackGroundColor,
-                                        textColor: kBlackColor,
+                                      Obx(
+                                        ()=> controller.isUploading.value ? const Center(child: CircularProgressIndicator(),) :CustomButton(
+                                          text: "Add Image",
+                                          height: 40,
+                                          onTap: () {
+                                            controller.pickImage();
+                                          },
+                                          width: 100,
+                                          color: kBackGroundColor,
+                                          borderColor: kBackGroundColor,
+                                          textColor: kBlackColor,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -479,8 +494,8 @@ class BlogScreen extends GetView<BlogController> {
                                             color: kFieldBorderColor)),
                                     child: ClipRRect(
                                       borderRadius: AppStyles.customBorder8,
-                                      child: Image.memory(
-                                        controller.selectedImage.value!,
+                                      child: Image.network(
+                                        controller.selectedImage.value,
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -501,7 +516,11 @@ class BlogScreen extends GetView<BlogController> {
                       text: "Cancel",
                       height: 40,
                       onTap: () {
-                        Get.back();
+                        controller.selectedImage.value = '';
+                        controller.selectedBlogType.value = '';
+                        controller.title.clear();
+                        controller.desc.clear();
+                        Get.close(1);
                       },
                       width: 75,
                       textColor: kBlackColor,
@@ -513,9 +532,15 @@ class BlogScreen extends GetView<BlogController> {
                       text: "Update Blog",
                       height: 40,
                       onTap: () async {
+                        if(controller.isUploading.value){
+                          Get.snackbar('Error', "Please wait image is uploading",
+                              backgroundColor: kPrimaryColor,
+                              colorText: kWhiteColor);
+                          return;
+                        }
                         if (controller.title.text.isEmpty ||
                             controller.desc.text.isEmpty ||
-                            controller.selectedBlogType.value == '') {
+                            controller.selectedBlogType.value == '' || controller.selectedImage.value == '') {
                           Get.snackbar('Error', "All fields are required",
                               backgroundColor: kPrimaryColor,
                               colorText: kWhiteColor);
@@ -527,10 +552,10 @@ class BlogScreen extends GetView<BlogController> {
                           category: controller.selectedBlogType.value,
                           description: controller.desc.text,
                           coverImage:
-                              "https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg",
+                              controller.selectedImage.value,
                         );
 
-                        controller.selectedImage.value = null;
+                        controller.selectedImage.value = '';
                         controller.selectedBlogType.value = '';
                         controller.title.clear();
                         controller.desc.clear();

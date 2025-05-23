@@ -143,7 +143,7 @@ class BlogService {
     log("createBlogByAdmin==================> $responseModel");
 
     if (responseModel.statusCode >= 200 && responseModel.statusCode <= 230) {
-      return BlogModel.fromJson(responseModel.data["data"]["blog"]);
+      return BlogModel1.fromJson(responseModel.data["data"]["blog"]);
     }
 
     return {

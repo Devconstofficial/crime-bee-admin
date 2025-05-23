@@ -154,6 +154,7 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                             color: kPrimaryColor,
                             fontSize: 14,
                           ),
+                          
                         ],
                       )
                     ],
@@ -349,6 +350,28 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                                         size: 24,
                                         color: kPrimaryColor,
                                       )),
+                                      Container(
+                                  width: 1,
+                                  color: kLightGreyColor,
+                                ),
+                                const Icon(
+                                  Icons.refresh,
+                                  color: kPrimaryColor,
+                                  size: 18,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    controller.clearFilters();
+                                  },
+                                  child: Text(
+                                    "Reset Filter",
+                                    style: AppStyles.workSansTextStyle()
+                                        .copyWith(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: kPrimaryColor,),
+                                  ),
+                                ),
                                 ],
                               ),
                             ),

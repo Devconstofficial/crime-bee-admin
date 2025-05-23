@@ -1,14 +1,17 @@
+import 'dart:developer';
+import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:mime/mime.dart';
 import 'package:crime_bee_admin/view/models/blog_model.dart';
 import 'package:crime_bee_admin/view/models/blog_model2.dart';
 import 'package:crime_bee_admin/web_services/blog_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../../utils/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class BlogController extends GetxController {
   var selectedBlogType = ''.obs;
@@ -20,13 +23,45 @@ class BlogController extends GetxController {
   RxList activities = [].obs;
   var selectedFilters = <String>{}.obs;
 
-  Rx<Uint8List?> selectedImage = Rx<Uint8List?>(null);
+  RxString selectedImage = ''.obs;
+  var isUploading = false.obs;
 
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      selectedImage.value = await image.readAsBytes();
+    final XFile? pickedFile =
+        await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      try {
+        isUploading(true);
+        final Uint8List imageBytes = await pickedFile.readAsBytes();
+        final mimeType = lookupMimeType(pickedFile.name) ?? 'image/jpeg';
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('blogs_image/${DateTime.now().millisecondsSinceEpoch}.jpg');
+        final metadata = SettableMetadata(contentType: mimeType);
+        UploadTask uploadTask = storageRef.putData(imageBytes, metadata);
+        uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+          log("Upload progress: ${snapshot.bytesTransferred} / ${snapshot.totalBytes}");
+        }, onError: (e) {
+          log("Upload error: $e");
+        });
+        final TaskSnapshot taskSnapshot = await uploadTask;
+        final downloadUrl = await taskSnapshot.ref.getDownloadURL();
+
+        log("Image uploaded successfully: $downloadUrl");
+        selectedImage.value = downloadUrl;
+        isUploading(false);
+      } catch (e) {
+        log("Upload failed: $e");
+        Get.snackbar(
+          'Error',
+          'Failed to upload image.',
+          backgroundColor: kPrimaryColor,
+          colorText: kWhiteColor,
+        );
+        isUploading(false);
+      }
     }
   }
 
@@ -44,10 +79,9 @@ class BlogController extends GetxController {
         coverImage: coverImage,
       );
 
-      if (result is BlogModel) {
+      if (result is BlogModel1) {
         print("Blog created successfully: ${result.title}");
-        // allUserBlogs.insert(0, result);
-        // applyPagination();
+        fetchAllBlogs();
       } else if (result is Map && result.containsKey("error")) {
         print("Failed to create blog: ${result['error']}");
       }
@@ -354,21 +388,23 @@ class BlogController extends GetxController {
   }
 
   void applyCategoryFilters() {
-  if (selectedFilters.isEmpty) {
-    filteredBlogs.assignAll(allBlogs);
-  } else {
-    final List<BlogModel> filtered = allBlogs.where((blog) {
-      return selectedFilters.contains(blog.category); 
-    }).toList();
+    if (selectedFilters.isEmpty) {
+      filteredBlogs.assignAll(allBlogs);
+    } else {
+      final List<BlogModel> filtered = allBlogs.where((blog) {
+        return selectedFilters.contains(blog.category);
+      }).toList();
 
-    filteredBlogs.assignAll(filtered);
+      filteredBlogs.assignAll(filtered);
+    }
+
+    blogsCurrentPage.value = 1;
+    blogTotalPages.value = (filteredBlogs.length / blogsPerPage)
+        .ceil()
+        .clamp(1, double.infinity)
+        .toInt();
+    applyPagination1();
   }
-
-  blogsCurrentPage.value = 1;
-  blogTotalPages.value = (filteredBlogs.length / blogsPerPage).ceil().clamp(1, double.infinity).toInt();
-  applyPagination1();
-}
-
 
   void goToPreviousBlogPage() {
     if (blogsCurrentPage.value > 1) {
@@ -406,11 +442,13 @@ class BlogController extends GetxController {
   }
 
   void resetCategoryFilters() {
-  selectedFilters.clear(); 
-  filteredBlogs.clear(); 
-  blogsCurrentPage.value = 1;
-  blogTotalPages.value = (allBlogs.length / blogsPerPage).ceil().clamp(1, double.infinity).toInt();
-  applyPagination1(); 
-}
-
+    selectedFilters.clear();
+    filteredBlogs.clear();
+    blogsCurrentPage.value = 1;
+    blogTotalPages.value = (allBlogs.length / blogsPerPage)
+        .ceil()
+        .clamp(1, double.infinity)
+        .toInt();
+    applyPagination1();
+  }
 }

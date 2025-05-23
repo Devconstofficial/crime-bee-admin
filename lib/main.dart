@@ -1,6 +1,8 @@
+import 'package:crime_bee_admin/firebase_options.dart';
 import 'package:crime_bee_admin/utils/app_colors.dart';
 import 'package:crime_bee_admin/utils/app_styles.dart';
 import 'package:crime_bee_admin/utils/route_generator.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -8,6 +10,8 @@ import 'utils/app_strings.dart';
 import 'utils/screen_bindings.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   runApp(const MyApp());
 }
 

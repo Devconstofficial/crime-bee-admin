@@ -75,7 +75,6 @@ class SubscriptionController extends GetxController {
       },
     ]);
   }
-  
 
   RxList<dynamic> subscriptionsList = [].obs;
   RxList<dynamic> allSubscriptionsList = [].obs;
@@ -117,38 +116,38 @@ class SubscriptionController extends GetxController {
 
   void updateSearchQuery(String query) {
     searchQuery.value = query;
-    currentPage.value = 1; 
+    currentPage.value = 1;
     applySearchAndPaginate();
   }
 
   void applySearchAndPaginate() {
-  final query = searchQuery.value.trim().toLowerCase();
-  final filters = selectedFilters;
+    final query = searchQuery.value.trim().toLowerCase();
+    final filters = selectedFilters;
 
-  List<dynamic> filteredList = allSubscriptionsList.where((sub) {
-    final name = (sub['user']?['name'] ?? '').toString().toLowerCase();
-    final matchesQuery = query.isEmpty || name.contains(query);
+    List<dynamic> filteredList = allSubscriptionsList.where((sub) {
+      final name = (sub['user']?['name'] ?? '').toString().toLowerCase();
+      final matchesQuery = query.isEmpty || name.contains(query);
 
-    final subType = _formatSubscriptionType(sub['user']?['type']);
-    final matchesFilter =
-        filters.isEmpty || filters.contains(subType); 
+      final subType = _formatSubscriptionType(sub['type']);
+      final matchesFilter = filters.isEmpty || filters.contains(subType);
+      print(matchesQuery);
+      print(matchesFilter);
 
-    return matchesQuery && matchesFilter;
-  }).toList();
+      return matchesQuery && matchesFilter;
+    }).toList();
 
-  totalPages.value = (filteredList.length / itemsPerPage)
-      .ceil()
-      .clamp(1, double.infinity)
-      .toInt();
+    totalPages.value = (filteredList.length / itemsPerPage)
+        .ceil()
+        .clamp(1, double.infinity)
+        .toInt();
 
-  final start = (currentPage.value - 1) * itemsPerPage;
-  final end = (start + itemsPerPage > filteredList.length)
-      ? filteredList.length
-      : start + itemsPerPage;
+    final start = (currentPage.value - 1) * itemsPerPage;
+    final end = (start + itemsPerPage > filteredList.length)
+        ? filteredList.length
+        : start + itemsPerPage;
 
-  subscriptionsList.value = filteredList.sublist(start, end);
-}
-
+    subscriptionsList.value = filteredList.sublist(start, end);
+  }
 
   void changePage(int pageNumber) {
     if (pageNumber > 0 && pageNumber <= totalPages.value) {
@@ -172,18 +171,17 @@ class SubscriptionController extends GetxController {
   }
 
   void clearFilters() {
-  selectedFilters.clear();
-  currentPage.value = 1;
-  applySearchAndPaginate();
-}
-
+    selectedFilters.clear();
+    currentPage.value = 1;
+    applySearchAndPaginate();
+  }
 
   String _formatSubscriptionType(dynamic type) {
     final typeStr = type?.toString().toLowerCase() ?? '';
 
     if (typeStr.contains('monthly')) return 'Monthly';
     if (typeStr.contains('annual')) return 'Annually';
-    return type?.toString() ?? '';
+    return '';
   }
 
   bool get isBackButtonDisabled => currentPage.value == 1;

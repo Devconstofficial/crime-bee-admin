@@ -38,6 +38,22 @@
   <title>crime_bee_admin</title>
   <link rel="manifest" href="manifest.json">
 </head>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_8gsKbDgaoQeYsBq6JtA1ZEj5M7yrjnQ",
+    authDomain: "crimebeeapp.firebaseapp.com",
+    projectId: "crimebeeapp",
+    storageBucket: "crimebeeapp.firebasestorage.app",
+    messagingSenderId: "212650634071",
+    appId: "1:212650634071:web:98a925d47285f7d8beac12",
+    measurementId: "G-9BW8MZ2G5Y"
+  };
+
+  const app = initializeApp(firebaseConfig);
+</script>
+
 <body>
   <script src="flutter_bootstrap.js" async></script>
 </body>
