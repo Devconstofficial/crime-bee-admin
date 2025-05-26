@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart';
 import '../../../utils/app_colors.dart';
-import '../../../utils/app_images.dart';
 import '../../../utils/app_strings.dart';
 import '../../../utils/app_styles.dart';
 import '../../../utils/common_code.dart';

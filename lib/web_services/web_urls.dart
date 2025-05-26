@@ -53,7 +53,7 @@ class WebUrls extends _BaseUrl {
 }
 
 abstract class _BaseUrl {
-  static const String _kBaseUrl = 'https://backend.nativeinitiative.org';
+  static const String _kBaseUrl = 'https://backend.crimebee.com';
   static const String _kMapAPiKey = 'AIzaSyCXNn8upsCmExEMsdvskyRaQZhdzye9QsA';
   // static const String _kSocketUrl = 'https://8zpp5sr3-3000.inc1.devtunnels.ms';
   // static const String _kBaseUrl = 'https://8zpp5sr3-8000.inc1.devtunnels.ms';

@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:crime_bee_admin/view/models/monthly_crime_chart_model.dart';
 import 'package:crime_bee_admin/web_services/dashboard_services.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:fl_chart/fl_chart.dart' as fl;

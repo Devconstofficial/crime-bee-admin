@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:crime_bee_admin/utils/app_strings.dart';
 import 'package:crime_bee_admin/view/models/blog_model.dart';

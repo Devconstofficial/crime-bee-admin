@@ -1,5 +1,4 @@
 
-import 'package:crime_bee_admin/view/models/user_model.dart';
 
 class BlogModel1 {
   String blogId = "";
