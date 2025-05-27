@@ -1,4 +1,3 @@
-
 import 'package:crime_bee_admin/utils/app_strings.dart';
 import 'package:crime_bee_admin/view/models/blog_model.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -176,17 +175,22 @@ class BlogScreen extends GetView<BlogController> {
                                                 color: const Color(0xff858D9D)),
                                       ),
                                       Obx(
-                                        ()=> controller.isUploading.value ? const Center(child: CircularProgressIndicator(),) : CustomButton(
-                                          text: "Add Image",
-                                          height: 40,
-                                          onTap: () {
-                                            controller.pickImage();
-                                          },
-                                          width: 100,
-                                          color: kBackGroundColor,
-                                          borderColor: kBackGroundColor,
-                                          textColor: kBlackColor,
-                                        ),
+                                        () => controller.isUploading.value
+                                            ? const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              )
+                                            : CustomButton(
+                                                text: "Add Image",
+                                                height: 40,
+                                                onTap: () {
+                                                  controller.pickImage();
+                                                },
+                                                width: 100,
+                                                color: kBackGroundColor,
+                                                borderColor: kBackGroundColor,
+                                                textColor: kBlackColor,
+                                              ),
                                       ),
                                     ],
                                   ),
@@ -251,15 +255,17 @@ class BlogScreen extends GetView<BlogController> {
                       text: "Add Blog",
                       height: 40,
                       onTap: () async {
-                        if(controller.isUploading.value){
-                          Get.snackbar('Error', "Please wait image is uploading",
+                        if (controller.isUploading.value) {
+                          Get.snackbar(
+                              'Error', "Please wait image is uploading",
                               backgroundColor: kPrimaryColor,
                               colorText: kWhiteColor);
                           return;
                         }
                         if (controller.title.text.isEmpty ||
                             controller.desc.text.isEmpty ||
-                            controller.selectedBlogType.value == '' || controller.selectedImage.value == '') {
+                            controller.selectedBlogType.value == '' ||
+                            controller.selectedImage.value == '') {
                           Get.snackbar('Error', "All fields are required",
                               backgroundColor: kPrimaryColor,
                               colorText: kWhiteColor);
@@ -269,8 +275,7 @@ class BlogScreen extends GetView<BlogController> {
                           title: controller.title.text,
                           category: controller.selectedBlogType.value,
                           description: controller.desc.text,
-                          coverImage:
-                              controller.selectedImage.value,
+                          coverImage: controller.selectedImage.value,
                         );
 
                         controller.selectedImage.value = '';
@@ -441,7 +446,6 @@ class BlogScreen extends GetView<BlogController> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-
                                       SvgPicture.asset(
                                         kGalleryIcon,
                                         height: 16,
@@ -456,17 +460,22 @@ class BlogScreen extends GetView<BlogController> {
                                                 color: const Color(0xff858D9D)),
                                       ),
                                       Obx(
-                                        ()=> controller.isUploading.value ? const Center(child: CircularProgressIndicator(),) :CustomButton(
-                                          text: "Add Image",
-                                          height: 40,
-                                          onTap: () {
-                                            controller.pickImage();
-                                          },
-                                          width: 100,
-                                          color: kBackGroundColor,
-                                          borderColor: kBackGroundColor,
-                                          textColor: kBlackColor,
-                                        ),
+                                        () => controller.isUploading.value
+                                            ? const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              )
+                                            : CustomButton(
+                                                text: "Add Image",
+                                                height: 40,
+                                                onTap: () {
+                                                  controller.pickImage();
+                                                },
+                                                width: 100,
+                                                color: kBackGroundColor,
+                                                borderColor: kBackGroundColor,
+                                                textColor: kBlackColor,
+                                              ),
                                       ),
                                     ],
                                   ),
@@ -531,15 +540,17 @@ class BlogScreen extends GetView<BlogController> {
                       text: "Update Blog",
                       height: 40,
                       onTap: () async {
-                        if(controller.isUploading.value){
-                          Get.snackbar('Error', "Please wait image is uploading",
+                        if (controller.isUploading.value) {
+                          Get.snackbar(
+                              'Error', "Please wait image is uploading",
                               backgroundColor: kPrimaryColor,
                               colorText: kWhiteColor);
                           return;
                         }
                         if (controller.title.text.isEmpty ||
                             controller.desc.text.isEmpty ||
-                            controller.selectedBlogType.value == '' || controller.selectedImage.value == '') {
+                            controller.selectedBlogType.value == '' ||
+                            controller.selectedImage.value == '') {
                           Get.snackbar('Error', "All fields are required",
                               backgroundColor: kPrimaryColor,
                               colorText: kWhiteColor);
@@ -550,8 +561,7 @@ class BlogScreen extends GetView<BlogController> {
                           title: controller.title.text,
                           category: controller.selectedBlogType.value,
                           description: controller.desc.text,
-                          coverImage:
-                              controller.selectedImage.value,
+                          coverImage: controller.selectedImage.value,
                         );
 
                         controller.selectedImage.value = '';
@@ -797,18 +807,19 @@ class BlogScreen extends GetView<BlogController> {
                                   controller.toggleFilter("Health");
                                 },
                                 width: 74,
-                                borderColor:
-                                    controller.selectedFilters.contains("Health")
-                                        ? kWhiteColor
-                                        : kActionsButtonColor,
-                                color: controller.selectedFilters.contains("Health")
+                                borderColor: controller.selectedFilters
+                                        .contains("Health")
+                                    ? kWhiteColor
+                                    : kActionsButtonColor,
+                                color: controller.selectedFilters
+                                        .contains("Health")
                                     ? kPrimaryColor
                                     : kWhiteColor,
                                 fontSize: 14,
-                                textColor:
-                                    controller.selectedFilters.contains("Health")
-                                        ? kWhiteColor
-                                        : kBlackColor,
+                                textColor: controller.selectedFilters
+                                        .contains("Health")
+                                    ? kWhiteColor
+                                    : kBlackColor,
                               );
                             },
                           ),
@@ -1039,12 +1050,14 @@ class BlogScreen extends GetView<BlogController> {
                               children: [
                                 Container(
                                   height: 70,
-                                  width: 319,
+                                  width: width / 3,
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: kFilterContainerColor,
-                                      border:
-                                          Border.all(color: kTableBorderColor)),
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: kFilterContainerColor,
+                                    border: Border.all(
+                                      color: kTableBorderColor,
+                                    ),
+                                  ),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
@@ -1062,8 +1075,9 @@ class BlogScreen extends GetView<BlogController> {
                                         kFilterBy,
                                         style: AppStyles.workSansTextStyle()
                                             .copyWith(
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.w600),
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                       Container(
                                         width: 1,
@@ -1073,8 +1087,9 @@ class BlogScreen extends GetView<BlogController> {
                                         kCategory,
                                         style: AppStyles.workSansTextStyle()
                                             .copyWith(
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.w600),
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                       InkWell(
                                           onTap: () {
@@ -1090,31 +1105,111 @@ class BlogScreen extends GetView<BlogController> {
                                             size: 24,
                                             color: kPrimaryColor,
                                           )),
-                                          Container(
-                                  width: 1,
-                                  color: kLightGreyColor,
-                                ),
-                                const Icon(
-                                  Icons.refresh,
-                                  color: kPrimaryColor,
-                                  size: 18,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    controller.resetCategoryFilters();
-                                  },
-                                  child: Text(
-                                    "Reset Filter",
-                                    style: AppStyles.workSansTextStyle()
-                                        .copyWith(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: kPrimaryColor,),
-                                  ),
-                                ),
+                                      Container(
+                                        width: 1,
+                                        color: kLightGreyColor,
+                                      ),
+                                      const Icon(
+                                        Icons.refresh,
+                                        color: kPrimaryColor,
+                                        size: 18,
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          controller.resetCategoryFilters();
+                                        },
+                                        child: Text(
+                                          "Reset Filter",
+                                          style: AppStyles.workSansTextStyle()
+                                              .copyWith(
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: kPrimaryColor,
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
+                                // Container(
+                                //   height: 70,
+                                //   width: 319,
+                                //   decoration: BoxDecoration(
+                                //       borderRadius: BorderRadius.circular(10),
+                                //       color: kFilterContainerColor,
+                                //       border:
+                                //           Border.all(color: kTableBorderColor)),
+                                //   child: Row(
+                                //     mainAxisAlignment:
+                                //         MainAxisAlignment.spaceEvenly,
+                                //     children: [
+                                //       SvgPicture.asset(
+                                //         kFilterIcon,
+                                //         height: 23,
+                                //         width: 20,
+                                //       ),
+                                //       Container(
+                                //         width: 1,
+                                //         color: kLightGreyColor,
+                                //       ),
+                                //       Text(
+                                //         kFilterBy,
+                                //         style: AppStyles.workSansTextStyle()
+                                //             .copyWith(
+                                //                 fontSize: 14.sp,
+                                //                 fontWeight: FontWeight.w600),
+                                //       ),
+                                //       Container(
+                                //         width: 1,
+                                //         color: kLightGreyColor,
+                                //       ),
+                                //       Text(
+                                //         kCategory,
+                                //         style: AppStyles.workSansTextStyle()
+                                //             .copyWith(
+                                //                 fontSize: 14.sp,
+                                //                 fontWeight: FontWeight.w600),
+                                //       ),
+                                //       InkWell(
+                                //           onTap: () {
+                                //             showDialog(
+                                //               context: context,
+                                //               builder: (BuildContext context) {
+                                //                 return filterPopup(context);
+                                //               },
+                                //             );
+                                //           },
+                                //           child: const Icon(
+                                //             Icons.keyboard_arrow_down_outlined,
+                                //             size: 24,
+                                //             color: kPrimaryColor,
+                                //           )),
+                                //       Container(
+                                //         width: 1,
+                                //         color: kLightGreyColor,
+                                //       ),
+                                //       const Icon(
+                                //         Icons.refresh,
+                                //         color: kPrimaryColor,
+                                //         size: 18,
+                                //       ),
+                                //       InkWell(
+                                //         onTap: () {
+                                //           controller.resetCategoryFilters();
+                                //         },
+                                //         child: Text(
+                                //           "Reset Filter",
+                                //           style: AppStyles.workSansTextStyle()
+                                //               .copyWith(
+                                //             fontSize: 14.sp,
+                                //             fontWeight: FontWeight.w600,
+                                //             color: kPrimaryColor,
+                                //           ),
+                                //         ),
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
                                 MouseRegion(
                                   cursor: SystemMouseCursors.click,
                                   child: CustomButton(

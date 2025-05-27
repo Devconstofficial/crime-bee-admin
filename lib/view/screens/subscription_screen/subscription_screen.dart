@@ -299,11 +299,14 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                             ),
                             Container(
                               height: 70,
-                              width: 358,
+                              width: width / 3,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: kFilterContainerColor,
-                                  border: Border.all(color: kTableBorderColor)),
+                                borderRadius: BorderRadius.circular(10),
+                                color: kFilterContainerColor,
+                                border: Border.all(
+                                  color: kTableBorderColor,
+                                ),
+                              ),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
@@ -319,10 +322,11 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                                   ),
                                   Text(
                                     kFilterBy,
-                                    style: AppStyles.workSansTextStyle()
-                                        .copyWith(
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w600),
+                                    style:
+                                        AppStyles.workSansTextStyle().copyWith(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                   Container(
                                     width: 1,
@@ -330,10 +334,11 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                                   ),
                                   Text(
                                     "Subscription Type",
-                                    style: AppStyles.workSansTextStyle()
-                                        .copyWith(
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w600),
+                                    style:
+                                        AppStyles.workSansTextStyle().copyWith(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                   InkWell(
                                       onTap: () {
