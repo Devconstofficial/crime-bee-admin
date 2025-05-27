@@ -154,7 +154,6 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                             color: kPrimaryColor,
                             fontSize: 14,
                           ),
-                          
                         ],
                       )
                     ],
@@ -350,185 +349,211 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                                         size: 24,
                                         color: kPrimaryColor,
                                       )),
-                                      Container(
-                                  width: 1,
-                                  color: kLightGreyColor,
-                                ),
-                                const Icon(
-                                  Icons.refresh,
-                                  color: kPrimaryColor,
-                                  size: 18,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    controller.clearFilters();
-                                  },
-                                  child: Text(
-                                    "Reset Filter",
-                                    style: AppStyles.workSansTextStyle()
-                                        .copyWith(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: kPrimaryColor,),
+                                  Container(
+                                    width: 1,
+                                    color: kLightGreyColor,
                                   ),
-                                ),
+                                  const Icon(
+                                    Icons.refresh,
+                                    color: kPrimaryColor,
+                                    size: 18,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      controller.clearFilters();
+                                    },
+                                    child: Text(
+                                      "Reset Filter",
+                                      style: AppStyles.workSansTextStyle()
+                                          .copyWith(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: kPrimaryColor,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                             const SizedBox(
                               height: 32,
                             ),
-                            Container(
-                              width: width,
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(14),
-                                  topRight: Radius.circular(14),
-                                ),
-                                border: Border.all(
-                                    color: kTableBorderColor, width: 1),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    height: 49,
-                                    decoration: const BoxDecoration(
-                                      color: kPrimaryColor,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(14),
-                                        topRight: Radius.circular(14),
+                            Obx(
+                              () {
+                                if (controller.isLoading.value) {
+                                  return SizedBox(
+                                    height: 500.h,
+                                    child: const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                }
+                                if (controller.subscriptionsList.isEmpty) {
+                                  return const Center(
+                                      child: Text("No subscriptions found"));
+                                }
+                                return Container(
+                                  width: width,
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(14),
+                                      topRight: Radius.circular(14),
+                                    ),
+                                    border: Border.all(
+                                        color: kTableBorderColor, width: 1),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        height: 49,
+                                        decoration: const BoxDecoration(
+                                          color: kPrimaryColor,
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(14),
+                                            topRight: Radius.circular(14),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: width,
-                                    child: DataTable(
-                                      headingRowHeight: 49,
-                                      columns: [
-                                        DataColumn(
-                                          label: Flexible(
-                                            child: Text(
-                                              "User ID",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
+                                      SizedBox(
+                                        width: width,
+                                        child: DataTable(
+                                          headingRowHeight: 49,
+                                          columns: [
+                                            DataColumn(
+                                              label: Flexible(
+                                                child: Text(
+                                                  "User ID",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: AppStyles
+                                                          .workSansTextStyle()
                                                       .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 14.sp,
+                                                    color: kWhiteColor,
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          headingRowAlignment:
-                                              MainAxisAlignment.center,
-                                          label: Flexible(
-                                            child: Text(
-                                              "Name",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
+                                            DataColumn(
+                                              headingRowAlignment:
+                                                  MainAxisAlignment.center,
+                                              label: Flexible(
+                                                child: Text(
+                                                  "Name",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: AppStyles
+                                                          .workSansTextStyle()
                                                       .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 14.sp,
+                                                    color: kWhiteColor,
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          headingRowAlignment:
-                                              MainAxisAlignment.center,
-                                          label: Flexible(
-                                            child: Text(
-                                              "Type",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
+                                            DataColumn(
+                                              headingRowAlignment:
+                                                  MainAxisAlignment.center,
+                                              label: Flexible(
+                                                child: Text(
+                                                  "Type",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: AppStyles
+                                                          .workSansTextStyle()
                                                       .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 14.sp,
+                                                    color: kWhiteColor,
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          headingRowAlignment:
-                                              MainAxisAlignment.center,
-                                          label: Flexible(
-                                            child: Text(
-                                              "Status",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
+                                            DataColumn(
+                                              headingRowAlignment:
+                                                  MainAxisAlignment.center,
+                                              label: Flexible(
+                                                child: Text(
+                                                  "Status",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: AppStyles
+                                                          .workSansTextStyle()
                                                       .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 14.sp,
+                                                    color: kWhiteColor,
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          headingRowAlignment:
-                                              MainAxisAlignment.center,
-                                          label: Flexible(
-                                            child: Text(
-                                              "Revenue",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style:
-                                                  AppStyles.workSansTextStyle()
+                                            DataColumn(
+                                              headingRowAlignment:
+                                                  MainAxisAlignment.center,
+                                              label: Flexible(
+                                                child: Text(
+                                                  "Revenue",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: AppStyles
+                                                          .workSansTextStyle()
                                                       .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14.sp,
-                                                color: kWhiteColor,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 14.sp,
+                                                    color: kWhiteColor,
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                      ],
-                                      rows: controller.subscriptionsList
-                                          .map((user) => _buildDataRow(
-                                                user['user']['_id'],
-                                                user['user']['name'] ?? '',
-                                                user['amount'],
-                                                user['status'] ?? '',
-                                                _formatSubscriptionType(
-                                                    user['type']),
-                                                (user['status'] == 'expired' ||
-                                                        user['status'] ==
-                                                            'inactive')
-                                                    ? kPrimaryColor
-                                                    : user['status'] ==
-                                                            'cancelled'
-                                                        ? kBrownColor
-                                                        : kLightBlue,
-                                                (user['status'] == 'expired' ||
-                                                        user['status'] ==
-                                                            'inactive')
-                                                    ? kPrimaryColor
-                                                        .withOpacity(0.2)
-                                                    : user['status'] ==
-                                                            'cancelled'
-                                                        ? kBrownColor
+                                          ],
+                                          rows: controller.subscriptionsList
+                                              .map((user) => _buildDataRow(
+                                                    user['user']['_id'] ?? '',
+                                                    user['user']['name'] ?? '',
+                                                    user['amount'],
+                                                    user['status'] ?? '',
+                                                    _formatSubscriptionType(
+                                                        user['type']),
+                                                    (user['status'] ==
+                                                                'expired' ||
+                                                            user['status'] ==
+                                                                'inactive')
+                                                        ? kPrimaryColor
+                                                        : user['status'] ==
+                                                                'cancelled'
+                                                            ? kBrownColor
+                                                            : kLightBlue,
+                                                    (user['status'] ==
+                                                                'expired' ||
+                                                            user['status'] ==
+                                                                'inactive')
+                                                        ? kPrimaryColor
                                                             .withOpacity(0.2)
-                                                        : kLightBlue
-                                                            .withOpacity(0.2),
-                                                context,
-                                              ))
-                                          .toList(),
-                                      dataRowMaxHeight: 65,
-                                    ),
+                                                        : user['status'] ==
+                                                                'cancelled'
+                                                            ? kBrownColor
+                                                                .withOpacity(
+                                                                    0.2)
+                                                            : kLightBlue
+                                                                .withOpacity(
+                                                                    0.2),
+                                                    context,
+                                                  ))
+                                              .toList(),
+                                          dataRowMaxHeight: 65,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
                             const SizedBox(
                               height: 51,
